@@ -220,3 +220,12 @@ int main()
 //   i.e. 25 or 6 To 4, 25 Or 6 To 4 and 25 or 6 to 4 are all counted as different songs when they're clearly the same.
 //2. Songs with the same name but by different artists can overwrite eachother, i.e. All Along the Watchtower by Jimi
 //   Hendrix and Bob Dylan
+//3. There may be something wrong with the alphabetical algorithm when it comes to checking a space against a letter.
+//   The parsed data has a section of songs that looks like this: American Girl, American Pie, America, American Girl,
+//   American Pie, American Woman, America ... and goes on for like 10 more lines.
+//4. Might need to expand to Unicode, certain songs have symbols not supported by ASCII, etc. "And the Cradle Will Rock..."
+//   by Van Halen feature an elipses character (not just three dots) and it garbles things a bit.
+//5. Songs with a single punctation mark at the end are being counted as different songs then those without a punctuation 
+//   mark, e.g. "Are You Experienced" and "Are You Experienced?" should be the same song
+
+//Tackling these 5 issues would probably solve about 90% of all issues/duplicates. This will make cleaning up by hand much easier.
