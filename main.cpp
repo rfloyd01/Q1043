@@ -215,29 +215,8 @@ int main()
 //Notes:
 // It currently takes just under 4 seconds (when not printing anything) to go through all of the data and sort it alphabetically by song title
 
-//Original brute force sorting algorithm
-//Put the song in the overall list in alphabetic order using a binary search approach
-			//bool placed = false;
-			//for (int j = 0; j < allSongs.size(); j++)
-			//{
-			//	//first see if the songs are the same
-			//	if (currentSong.title == allSongs[j].title)
-			//	{
-			//		if (artistsIncluded) allSongs[j].artist = currentSong.artist;
-			//		allSongs[j].yearsNomiated[year - 2001] = true;
-			//		allSongs[j].rankByYear[year - 2001] = i;
-			//		placed = true;
-			//		break;
-			//	}
-			//	else
-			//	{
-			//		//the songs aren't the same so see if the current song can be placed here
-			//		if (alphabeticallyFirst(currentSong.title, allSongs[j].title))
-			//		{
-			//			allSongs.insert(allSongs.begin() + j, currentSong);
-			//			placed = true;
-			//			break;
-			//		}
-			//	}
-			//}
-			//if (!placed) allSongs.push_back(currentSong);
+//Current Issues
+//1. Songs that are spelt the same, but with different capital letters aren't being recognized as the same song.
+//   i.e. 25 or 6 To 4, 25 Or 6 To 4 and 25 or 6 to 4 are all counted as different songs when they're clearly the same.
+//2. Songs with the same name but by different artists can overwrite eachother, i.e. All Along the Watchtower by Jimi
+//   Hendrix and Bob Dylan
