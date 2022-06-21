@@ -107,6 +107,12 @@ int main()
 	//start a timer to see how long this takes
 	auto run_time = std::chrono::steady_clock::now();
 
+	//Used to figure out the appropriate column size for database
+	int longestSongName = 0;
+	int longestArtistName = 0;
+	std::string longestSong = "";
+	std::string longestArtist = "";
+
 	std::ifstream myFile;
 	std::string songString;
 
@@ -147,6 +153,12 @@ int main()
 				for (int j = end + 2; j < songString.length(); j++)
 					if (songString[j] != ',') currentSong.artist += songString[j]; //ignore commas because of comma delimitting for Excel
 				end -= 2; //this puts the end of the song title to the approprite spot right before the '-'
+
+				if (currentSong.artist.length() > longestArtistName)
+				{
+					longestArtistName = currentSong.artist.length();
+					longestArtist = currentSong.artist;
+				}
 			}
 
 			//Iterate through the line until we hit the fist '.' character, the song starts two characters after this
@@ -162,6 +174,12 @@ int main()
 			}
 			currentSong.yearsNomiated[year - 2001] = true;
 			currentSong.rankByYear[year - 2001] = i;
+
+			if (currentSong.title.length() > longestSongName)
+			{
+				longestSongName = currentSong.title.length();
+				longestSong = currentSong.title;
+			}
 
 			//Place song in the ongoing list using a binary search algorithm
 			int front = 0, back = allSongs.size() - 1, search_index = 0;
@@ -190,9 +208,13 @@ int main()
 		myFile.close();
 	}
 	
+	std::cout << "The longest song name has a length of " << longestSongName << " characters." << std::endl;
+	std::cout <<  longestSong << std::endl;
+	std::cout << "The longest artist name has a length of " << longestArtistName << " characters." << std::endl;
+	std::cout << longestArtist << std::endl;
 
 	//print the songs in a CSV format to input into excel
-	for (int i = 0; i < allSongs.size(); i++)
+	/*for (int i = 0; i < allSongs.size(); i++)
 	{
 		std::cout << allSongs[i].artist << ", " << allSongs[i].title << ", ";
 		for (int j = 0; j < 19; j++)
@@ -203,7 +225,7 @@ int main()
 		if (allSongs[i].yearsNomiated[19]) std::cout << allSongs[i].rankByYear[19];
 		else std::cout << "0";
 		std::cout << std::endl;
-	}
+	}*/
 
 	std::cout << "Ran in ";
 	std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - run_time).count() / 1000000000.0;
