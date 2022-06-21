@@ -9,12 +9,12 @@ struct Song
 	std::string artist = "";
 	std::string title = "";
 
-	//order for years is {2001, 2002, 2003, ..., 2020}
-	bool yearsNomiated[20] = { false };
-	int rankByYear[20] = { 0 };
+	//order for years is {2001, 2002, 2003, ..., 2021}
+	bool yearsNomiated[21] = { false };
+	int rankByYear[21] = { 0 };
 };
 
-bool alphabeticallyFirst(std::string one, std::string two)
+int alphabeticallyFirst(std::string one, std::string two)
 {
 	//returns true if string one comes alphabetically before string two
 	int stop = one.length() < two.length() ? one.length() : two.length();
@@ -51,14 +51,14 @@ bool alphabeticallyFirst(std::string one, std::string two)
 		{
 			int yo = 5;
 			//Case: One word has a space but the other doesn't
-			if (one[oneLocation] == 32 && two[twoLocation] != 32) return true; //the word in one finshed first so it comes first alphabetically
-			if (one[oneLocation] != 32 && two[twoLocation] == 32) return false; //the word in two finshed first so it comes first alphabetically
+			if (one[oneLocation] == 32 && two[twoLocation] != 32) return 1; //the word in one finshed first so it comes first alphabetically
+			if (one[oneLocation] != 32 && two[twoLocation] == 32) return 0; //the word in two finshed first so it comes first alphabetically
 
 			//Case: Both words have a space (do nothing and continue on to the next word)
 
 			//Case: One of the words has a letter
-			if (oneIsALetter) return false; //the character in two isn't a letter and therefore comes first
-			if (twoIsALetter) return true; //the character in one isn't a letter and therefore comes first
+			if (oneIsALetter) return 0; //the character in two isn't a letter and therefore comes first
+			if (twoIsALetter) return 1; //the character in one isn't a letter and therefore comes first
 
 			//there are no spaces are letters present, so either both characters are numbers, both are symbols, or we have one of each
 
@@ -67,19 +67,19 @@ bool alphabeticallyFirst(std::string one, std::string two)
 				if (two[twoLocation] >= 48 && two[twoLocation] <= 57)
 				{
 					//Case: we have two numbers (this is the more likely outcome at this point)
-					if (one[oneLocation] < two[twoLocation]) return true; //the number in one comes before the number in two
-					else if (one[oneLocation] > two[twoLocation]) return false; //the number in one comes after the number in two
+					if (one[oneLocation] < two[twoLocation]) return 1; //the number in one comes before the number in two
+					else if (one[oneLocation] > two[twoLocation]) return 0; //the number in one comes after the number in two
 
 					//if the numbers are equal then we do nothing
 				}
-				else return false; //Case: one is a number and two is a symbol so two comes first
+				else return 0; //Case: one is a number and two is a symbol so two comes first
 			}
-			else if (two[twoLocation] >= 48 && two[twoLocation] <= 57) return true; //Case: one is a symbol and two isn't so one comes first
+			else if (two[twoLocation] >= 48 && two[twoLocation] <= 57) return 1; //Case: one is a symbol and two isn't so one comes first
 			else
 			{
 				//Case: both one and two symbols, I honestly don't know how symbols get alphabatized in real life so I'll just go with ASCII order
-				if (one[oneLocation] > two[twoLocation]) return false;
-				else if (one[oneLocation] < two[twoLocation]) return true;
+				if (one[oneLocation] > two[twoLocation]) return 0;
+				else if (one[oneLocation] < two[twoLocation]) return 1;
 
 				//if the symbols are the same then we do nothing
 			}
@@ -87,8 +87,8 @@ bool alphabeticallyFirst(std::string one, std::string two)
 		else
 		{
 			//Case: we have two letters, this is just a normal alphabetical check
-			if (one[oneLocation] > two[twoLocation]) return false;
-			else if (one[oneLocation] < two[twoLocation]) return true;
+			if (one[oneLocation] > two[twoLocation]) return 0;
+			else if (one[oneLocation] < two[twoLocation]) return 1;
 
 			//if the letters are the same then we do nothing
 		}
@@ -98,8 +98,12 @@ bool alphabeticallyFirst(std::string one, std::string two)
 		twoLocation++;
 	}
 
-	//there shouldn't be any reason to get to this point in the function, but if we do just return false
-	return false;
+	//if we get to this point it means one of two things: Either that the two stings are the same,
+	//or, we've reached the end of one of the. For the example "Black" and "Black Dog" would both 
+	//reach this point.
+	if (one.length() < two.length()) return 1; //one comes first as it's a shorter string
+	else if (one.length() > two.length()) return 0; //one comes second because it's a longer string
+	return 2; //the strings are the same and thus we return 2 to indicate equality
 }
 
 int main()
@@ -115,7 +119,7 @@ int main()
 	//read through each character...one at a time...for all 1043 songs
 	//long long location = 0; //a long long is overkill here right?
 
-	for (int year = 2020; year >= 2001; year--)
+	for (int year = 2021; year >= 2001; year--)
 	{
 		myFile.open("Song_Data/" + std::to_string(year) + ".txt");
 
@@ -138,7 +142,7 @@ int main()
 			//Read each song one line at a time
 			Song currentSong;
 			std::getline(myFile, songString);
-			int location = 0, end = songString.length() - 1;
+			int location = 0, end = songString.length() - 1, compareValue = 0;
 
 			if (artistsIncluded)
 			{
@@ -163,6 +167,10 @@ int main()
 			currentSong.yearsNomiated[year - 2001] = true;
 			currentSong.rankByYear[year - 2001] = i;
 
+			//For some reason the year 2021 has the songs counting down instead of up (maybe because it's
+			//the most recent). Adjust the song rankings here
+			if (year == 2021) currentSong.rankByYear[year - 2001] = (i + 1044 - 2 * i);
+
 			//Place song in the ongoing list using a binary search algorithm
 			int front = 0, back = allSongs.size() - 1, search_index = 0;
 			while (true)
@@ -174,14 +182,37 @@ int main()
 				}
 
 				search_index = (front + back) / 2;
-				if (currentSong.title == allSongs[search_index].title)
+				compareValue = alphabeticallyFirst(currentSong.title, allSongs[search_index].title);
+
+				if (compareValue == 2)
 				{
+					//The song names are the same, we have to be carfeul though because there are some
+					//songs by different artists that have the same name (i.e. All Along the Watchtower
+					//by Jimi Hendrix and Bob Dylan). Check to see if this song has already been placed this year
+					//and if so, add it as a distinct line item. This will add more line items overall, but,
+					//prevents overwritting of useful data. Generally speaking, it's unlikely that songs with the
+					//same names will be close to eachother on the list (i.e. Jimi Hendrix's All along the Watchtower
+					//will probably always be ranked a few hundred places higher than Bob Dylan's). Since we'll always
+					//encounter duplicates in the same order, we insert duplicate songs AFTER the current song instead
+					//of before it.
+					if (allSongs[search_index].yearsNomiated[year - 2001])
+					{
+						//song has already been added this year, add it as a new line item after the currently
+						//found song
+						auto yote = year;
+						auto yeet = allSongs[search_index];
+
+						allSongs.insert(allSongs.begin() + search_index + 1, currentSong);
+						break;
+					}
+
+					//Song hasn't been added this year already
 					if (artistsIncluded) allSongs[search_index].artist = currentSong.artist;
 					allSongs[search_index].yearsNomiated[year - 2001] = true;
 					allSongs[search_index].rankByYear[year - 2001] = i;
 					break;
 				}
-				else if (alphabeticallyFirst(currentSong.title, allSongs[search_index].title)) back = search_index - 1;
+				else if (compareValue == 1) back = search_index - 1;
 				else front = search_index + 1;
 			}
 		}
@@ -189,18 +220,17 @@ int main()
 		//close the file once we're done with it
 		myFile.close();
 	}
-	
 
 	//print the songs in a CSV format to input into excel
 	for (int i = 0; i < allSongs.size(); i++)
 	{
-		std::cout << allSongs[i].artist << ", " << allSongs[i].title << ", ";
-		for (int j = 0; j < 19; j++)
+		std::cout << allSongs[i].artist << "," << allSongs[i].title << ",";
+		for (int j = 0; j < 20; j++)
 		{
-			if (allSongs[i].yearsNomiated[j]) std::cout << allSongs[i].rankByYear[j] << ", ";
-			else std::cout << "0, ";
+			if (allSongs[i].yearsNomiated[j]) std::cout << allSongs[i].rankByYear[j] << ",";
+			else std::cout << "0,";
 		}
-		if (allSongs[i].yearsNomiated[19]) std::cout << allSongs[i].rankByYear[19];
+		if (allSongs[i].yearsNomiated[20]) std::cout << allSongs[i].rankByYear[20];
 		else std::cout << "0";
 		std::cout << std::endl;
 	}
@@ -218,14 +248,29 @@ int main()
 //Current Issues
 //1. Songs that are spelt the same, but with different capital letters aren't being recognized as the same song.
 //   i.e. 25 or 6 To 4, 25 Or 6 To 4 and 25 or 6 to 4 are all counted as different songs when they're clearly the same.
+// (complete): this brought the amount fo distinct songs from ~3900 to ~2400
+
 //2. Songs with the same name but by different artists can overwrite eachother, i.e. All Along the Watchtower by Jimi
 //   Hendrix and Bob Dylan
+//(in progress) This appears to be working, there were a lot more repeats per year than I though, for example there are
+// at least four songs called "Dreams" that are by different artists appearing in various years. Looking at the rankings for
+//all along the watchtower though, it appears that some data is going into the wrong row at times, so this still may need a
+//little work.
+
 //3. There may be something wrong with the alphabetical algorithm when it comes to checking a space against a letter.
 //   The parsed data has a section of songs that looks like this: American Girl, American Pie, America, American Girl,
 //   American Pie, American Woman, America ... and goes on for like 10 more lines.
+//   (complete): Turns out the algorithm didn't account for strings that started with the same word, this has been fixed now
+
 //4. Might need to expand to Unicode, certain songs have symbols not supported by ASCII, etc. "And the Cradle Will Rock..."
 //   by Van Halen feature an elipses character (not just three dots) and it garbles things a bit.
+
 //5. Songs with a single punctation mark at the end are being counted as different songs then those without a punctuation 
 //   mark, e.g. "Are You Experienced" and "Are You Experienced?" should be the same song
 
-//Tackling these 5 issues would probably solve about 90% of all issues/duplicates. This will make cleaning up by hand much easier.
+//6. There may be a slight issue with the sorting algorithm, for some reason the various songs name "Dreams" are getting
+//   sprinkled in between songs that start with the word "Don't". Not sure why as most other things seem to be in the right order.
+//(complete) It turns out that when placing songs with the same name in the same year I was using the wrong variable to insert, 
+// I was using the 'front' variable instead of the 'current_index' variable.
+
+//Tackling these 6 issues would probably solve about 90% of all issues/duplicates. This will make cleaning up by hand much easier.
