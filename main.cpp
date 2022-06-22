@@ -19,13 +19,22 @@ int alphabeticallyFirst(std::string one, std::string two)
 	//returns true if string one comes alphabetically before string two
 	int stop = one.length() < two.length() ? one.length() : two.length();
 	int oneLocation = 0, twoLocation = 0;
+	bool oneParantheses = false, twoParantheses = false;
 
 	//If either string starts with the word "the" we need to ignore it.
 	//Example: "The Beatles" will come alphabetically before "Led Zeppelin" even though 'T' comes after 'L'
 	if (one.substr(0, 3) == "The " || one.substr(0, 3) == "the ") oneLocation = 4;
 	if (two.substr(0, 3) == "The " || two.substr(0, 3) == "the ") twoLocation = 4;
 
-	for (int i = 0; i < stop; i++)
+	/*if (one == "4th Of July Asbury Park Sandy")
+	{
+		if (two == "4th Of July Asbury Park (Sandy)")
+		{
+			int x = 5;
+		}
+	}*/
+
+	while (true)
 	{
 		//song titles can feature anything from letters, to numbers, to symbols.
 		//For my purposes, symbols come first alphabetically, then numbers and then letters.
@@ -35,8 +44,26 @@ int alphabeticallyFirst(std::string one, std::string two)
 		//any other number can be considered a symbol
 		//As a final note, if a space is included in either string then it will constitute a new
 		//word and will stop the comparison. ASCII code for space is 32.
+		if (oneLocation >= stop || twoLocation >= stop) break;
 
 		bool oneIsALetter = true, twoIsALetter = true;
+
+		//If the character of either word is a '(' or ')' symbol then we skip over it. A good number
+		//of song titles have portions between parantheses so we don't want songs like "(I Can't Get No) Satisfaction"
+		//and "I Can't Get No Satisfaction" to be counted differently
+		auto yo = stop;
+		if (one[oneLocation] == 40 || one[oneLocation] == 41)
+		{
+			oneLocation++;
+			oneParantheses = true;
+			if (oneLocation >= stop) break; //break out of loop if we've reached the end of the string
+		}
+		if (two[twoLocation] == 40 || two[twoLocation] == 41)
+		{
+			twoLocation++;
+			twoParantheses = true;
+			if (twoLocation >= stop) break; //break out of loop if we've reached the end of the string
+		}
 
 		//any letters should be converted to uppercase for simplicity
 		if (one[oneLocation] >= 97 && one[oneLocation] <= 122) one[oneLocation] -= 32;
@@ -60,7 +87,7 @@ int alphabeticallyFirst(std::string one, std::string two)
 			if (oneIsALetter) return 0; //the character in two isn't a letter and therefore comes first
 			if (twoIsALetter) return 1; //the character in one isn't a letter and therefore comes first
 
-			//there are no spaces are letters present, so either both characters are numbers, both are symbols, or we have one of each
+			//there are no spaces or letters present, so either both characters are numbers, both are symbols, or we have one of each
 
 			if (one[oneLocation] >= 48 && one[oneLocation] <= 57)
 			{
@@ -100,10 +127,20 @@ int alphabeticallyFirst(std::string one, std::string two)
 
 	//if we get to this point it means one of two things: Either that the two stings are the same,
 	//or, we've reached the end of one of the. For the example "Black" and "Black Dog" would both 
-	//reach this point.
-	if (one.length() < two.length()) return 1; //one comes first as it's a shorter string
-	else if (one.length() > two.length()) return 0; //one comes second because it's a longer string
-	return 2; //the strings are the same and thus we return 2 to indicate equality
+	//reach this point. It's also possible that the song titles are the same, but one features a set
+	//of parantheses and the other doesn't so we also need to check to see if the difference in length
+	//between them is exactly two and at least one of the strings has parantheses
+	if (one.length() == two.length()) return 2; //the strings are the same and thus we return 2 to indicate equality
+	else if (one.length() < two.length())
+	{
+		if ((two.length() - one.length() == 2) && twoParantheses) return 2; //same song but two has parantheses
+		return 1; //one comes first as it's a shorter string
+	}
+	else
+	{
+		if ((one.length() - two.length() == 2) && oneParantheses) return 2; //same song but one has parantheses
+		return 0; //one comes second because it's a longer string
+	}
 }
 
 int main()
@@ -243,19 +280,21 @@ int main()
 	std::cout << "The longest artist name has a length of " << longestArtistName << " characters." << std::endl;
 	std::cout << longestArtist << std::endl;*/
 
-	//print the songs in a CSV format to input into excel
-	/*for (int i = 0; i < allSongs.size(); i++)
+	//print the songs in a CSV format to an external file
+	std::ofstream outputFile;
+	outputFile.open("Song_Data/combined_data.txt");
+	for (int i = 0; i < allSongs.size(); i++)
 	{
-		std::cout << allSongs[i].artist << "," << allSongs[i].title << ",";
+		outputFile << (allSongs[i].artist + ',' + allSongs[i].title + ',');
 		for (int j = 0; j < 20; j++)
 		{
-			if (allSongs[i].yearsNomiated[j]) std::cout << allSongs[i].rankByYear[j] << ",";
-			else std::cout << "0,";
+			if (allSongs[i].yearsNomiated[j]) outputFile << allSongs[i].rankByYear[j] << ",";
+			else outputFile << "0,";
 		}
-		if (allSongs[i].yearsNomiated[20]) std::cout << allSongs[i].rankByYear[20];
-		else std::cout << "0";
-		std::cout << std::endl;
-	}*/
+		if (allSongs[i].yearsNomiated[20]) outputFile << allSongs[i].rankByYear[20];
+		else outputFile << "0";
+		outputFile << "\n";
+	}
 
 	std::cout << "Ran in ";
 	std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - run_time).count() / 1000000000.0;
