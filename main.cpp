@@ -17,6 +17,12 @@ struct Song
 int alphabeticallyFirst(std::string one, std::string two)
 {
 	//returns true if string one comes alphabetically before string two
+
+	//we're going to ignore punctuation marks so every time a symbol is encountered we skip
+	//over it and subtract the total length of the word by one. Create two temp variables to 
+	//hold adjusted length data
+	int oneLength = one.length(), twoLength = two.length();
+
 	int stop = one.length() < two.length() ? one.length() : two.length();
 	int oneLocation = 0, twoLocation = 0;
 	bool oneParantheses = false, twoParantheses = false;
@@ -26,15 +32,8 @@ int alphabeticallyFirst(std::string one, std::string two)
 	if (one.substr(0, 3) == "The " || one.substr(0, 3) == "the ") oneLocation = 4;
 	if (two.substr(0, 3) == "The " || two.substr(0, 3) == "the ") twoLocation = 4;
 
-	/*if (one == "4th Of July Asbury Park Sandy")
-	{
-		if (two == "4th Of July Asbury Park (Sandy)")
-		{
-			int x = 5;
-		}
-	}*/
-
-	while (true)
+	//while (true)
+	for (int i = 0; i < stop; i++)
 	{
 		//song titles can feature anything from letters, to numbers, to symbols.
 		//For my purposes, symbols come first alphabetically, then numbers and then letters.
@@ -44,26 +43,29 @@ int alphabeticallyFirst(std::string one, std::string two)
 		//any other number can be considered a symbol
 		//As a final note, if a space is included in either string then it will constitute a new
 		//word and will stop the comparison. ASCII code for space is 32.
-		if (oneLocation >= stop || twoLocation >= stop) break;
+		//if (oneLocation >= stop || twoLocation >= stop) break;
 
 		bool oneIsALetter = true, twoIsALetter = true;
 
-		//If the character of either word is a '(' or ')' symbol then we skip over it. A good number
-		//of song titles have portions between parantheses so we don't want songs like "(I Can't Get No) Satisfaction"
-		//and "I Can't Get No Satisfaction" to be counted differently
-		auto yo = stop;
-		if (one[oneLocation] == 40 || one[oneLocation] == 41)
-		{
-			oneLocation++;
-			oneParantheses = true;
-			if (oneLocation >= stop) break; //break out of loop if we've reached the end of the string
-		}
-		if (two[twoLocation] == 40 || two[twoLocation] == 41)
-		{
-			twoLocation++;
-			twoParantheses = true;
-			if (twoLocation >= stop) break; //break out of loop if we've reached the end of the string
-		}
+		//If either character is a symbol (other than space) then skip over it
+		//TODO: Maybe I can use some kind of Regex expression here?
+		//if (one[oneLocation] < 32 || (one[oneLocation] > 32 && one[oneLocation] < 48) || (one[oneLocation] > 57 && one[oneLocation] < 65)
+		//	|| (one[oneLocation] > 90 && one[oneLocation] < 97) || one[oneLocation] > 122)
+		//{
+		//	//this character is a symbol so we skip over it
+		//	oneLocation++;
+		//	oneLength--;
+		//	//if (oneLocation >= stop) break; //if the symbol was at the end of the shorter word we can stop scanning
+		//}
+		//if (two[twoLocation] < 32 || (two[twoLocation] > 32 && two[twoLocation] < 48) || (two[twoLocation] > 57 && two[twoLocation] < 65)
+		//	|| (two[twoLocation] > 90 && two[twoLocation] < 97) || two[twoLocation] > 122)
+		//{
+		//	//this character is a symbol so we skip over it
+		//	twoLocation++;
+		//	twoLength--;
+		//	//if (twoLocation >= stop) break; //if the symbol was at the end of the shorter word we can stop scanning
+		//}
+		//if (oneLocation >= stop || twoLocation >= stop) break; //check to see if there was any punctuation at the end of the string
 
 		//any letters should be converted to uppercase for simplicity
 		if (one[oneLocation] >= 97 && one[oneLocation] <= 122) one[oneLocation] -= 32;
@@ -76,40 +78,20 @@ int alphabeticallyFirst(std::string one, std::string two)
 		//if one of the characters isn't a letter, check to see if it's a space.
 		if (!(oneIsALetter && twoIsALetter))
 		{
-			int yo = 5;
 			//Case: One word has a space but the other doesn't
 			if (one[oneLocation] == 32 && two[twoLocation] != 32) return 1; //the word in one finshed first so it comes first alphabetically
 			if (one[oneLocation] != 32 && two[twoLocation] == 32) return 0; //the word in two finshed first so it comes first alphabetically
 
 			//Case: Both words have a space (do nothing and continue on to the next word)
 
-			//Case: One of the words has a letter
-			if (oneIsALetter) return 0; //the character in two isn't a letter and therefore comes first
-			if (twoIsALetter) return 1; //the character in one isn't a letter and therefore comes first
+			//Case: One of the words has a number and the other doesn't
+			if (oneIsALetter) return 0; //the character in two is a number and therefore comes first
+			if (twoIsALetter) return 1; //the character in one is a number and therefore comes first
 
-			//there are no spaces or letters present, so either both characters are numbers, both are symbols, or we have one of each
-
-			if (one[oneLocation] >= 48 && one[oneLocation] <= 57)
-			{
-				if (two[twoLocation] >= 48 && two[twoLocation] <= 57)
-				{
-					//Case: we have two numbers (this is the more likely outcome at this point)
-					if (one[oneLocation] < two[twoLocation]) return 1; //the number in one comes before the number in two
-					else if (one[oneLocation] > two[twoLocation]) return 0; //the number in one comes after the number in two
-
-					//if the numbers are equal then we do nothing
-				}
-				else return 0; //Case: one is a number and two is a symbol so two comes first
-			}
-			else if (two[twoLocation] >= 48 && two[twoLocation] <= 57) return 1; //Case: one is a symbol and two isn't so one comes first
-			else
-			{
-				//Case: both one and two symbols, I honestly don't know how symbols get alphabatized in real life so I'll just go with ASCII order
-				if (one[oneLocation] > two[twoLocation]) return 0;
-				else if (one[oneLocation] < two[twoLocation]) return 1;
-
-				//if the symbols are the same then we do nothing
-			}
+			//both characters are numbers, compare them like normal
+			if (one[oneLocation] < two[twoLocation]) return 1; //the number in one comes before the number in two
+			else if (one[oneLocation] > two[twoLocation]) return 0; //the number in one comes after the number in two
+			//if the numbers are equal then we do nothing
 		}
 		else
 		{
@@ -125,22 +107,12 @@ int alphabeticallyFirst(std::string one, std::string two)
 		twoLocation++;
 	}
 
-	//if we get to this point it means one of two things: Either that the two stings are the same,
-	//or, we've reached the end of one of the. For the example "Black" and "Black Dog" would both 
-	//reach this point. It's also possible that the song titles are the same, but one features a set
-	//of parantheses and the other doesn't so we also need to check to see if the difference in length
-	//between them is exactly two and at least one of the strings has parantheses
-	if (one.length() == two.length()) return 2; //the strings are the same and thus we return 2 to indicate equality
-	else if (one.length() < two.length())
-	{
-		if ((two.length() - one.length() == 2) && twoParantheses) return 2; //same song but two has parantheses
-		return 1; //one comes first as it's a shorter string
-	}
-	else
-	{
-		if ((one.length() - two.length() == 2) && oneParantheses) return 2; //same song but one has parantheses
-		return 0; //one comes second because it's a longer string
-	}
+	//if we get to this point it means one of two things: Either that the two strings are the same,
+	//or, we've reached the end of one of them. For the example "Black" and "Black Dog" would both 
+	//reach this point.
+	if (oneLength == twoLength) return 2; //the strings are the same and thus we return 2 to indicate equality
+	else if (oneLength < twoLength) return 1; //one comes first as it's a shorter string
+	else return 0; //one comes second because it's a longer string
 }
 
 int main()
@@ -190,7 +162,7 @@ int main()
 			if (artistsIncluded)
 			{
 				while (songString[end] != '-') end--;
-				//currentSong.artist = songString.substr(end + 2); //the + 2 is so that we exclude the "- " from the artist name
+
 				for (int j = end + 2; j < songString.length(); j++)
 					if (songString[j] != ',') currentSong.artist += songString[j]; //ignore commas because of comma delimitting for Excel
 				end -= 2; //this puts the end of the song title to the approprite spot right before the '-'
@@ -209,8 +181,10 @@ int main()
 			//iterate until the end of the song title and capture each character in the title field of currentSong
 			while (location <= end)
 			{
-				//I'm using comma delimitting in Excel so just leave off any commas in song titles or artist names
-				if (songString[location] != ',') currentSong.title += songString[location];
+				//Leave out any punctiation when grabbing the song title
+				if (!(songString[location] < 32 || (songString[location] > 32 && songString[location] < 48) || 
+					(songString[location] > 57 && songString[location] < 65) || (songString[location] > 90 && songString[location] < 97) || 
+					songString[location] > 122) || (songString[location] == '/')) currentSong.title += songString[location];
 				location++;
 			}
 			currentSong.yearsNomiated[year - 2001] = true;
@@ -279,13 +253,16 @@ int main()
 	std::cout <<  longestSong << std::endl;
 	std::cout << "The longest artist name has a length of " << longestArtistName << " characters." << std::endl;
 	std::cout << longestArtist << std::endl;*/
+	//int artist_missing = 0;
 
-	//print the songs in a CSV format to an external file
+	//print the songs in a CSV format to an external file, make sure to leave a space for new title and new artist which 
+	//will help in auditing Spotify's performance
 	std::ofstream outputFile;
 	outputFile.open("Song_Data/combined_data.txt");
 	for (int i = 0; i < allSongs.size(); i++)
 	{
-		outputFile << (allSongs[i].artist + ',' + allSongs[i].title + ',');
+		//if (allSongs[i].artist == "") artist_missing++;
+		outputFile << (allSongs[i].artist + ",," + allSongs[i].title + ",,");
 		for (int j = 0; j < 20; j++)
 		{
 			if (allSongs[i].yearsNomiated[j]) outputFile << allSongs[i].rankByYear[j] << ",";
@@ -295,6 +272,8 @@ int main()
 		else outputFile << "0";
 		outputFile << "\n";
 	}
+
+	//std::cout << "There are currently " << artist_missing << " lines of data without an artist" << std::endl;
 
 	std::cout << "Ran in ";
 	std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - run_time).count() / 1000000000.0;
