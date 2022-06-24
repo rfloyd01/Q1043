@@ -181,10 +181,8 @@ int main()
 			//iterate until the end of the song title and capture each character in the title field of currentSong
 			while (location <= end)
 			{
-				//Leave out any punctiation when grabbing the song title
-				if (!(songString[location] < 32 || (songString[location] > 32 && songString[location] < 48) || 
-					(songString[location] > 57 && songString[location] < 65) || (songString[location] > 90 && songString[location] < 97) || 
-					songString[location] > 122) || (songString[location] == '/')) currentSong.title += songString[location];
+				//I'm using comma delimitting in Excel so just leave off any commas in song titles or artist names
+				if (songString[location] != ',') currentSong.title += songString[location];
 				location++;
 			}
 			currentSong.yearsNomiated[year - 2001] = true;
