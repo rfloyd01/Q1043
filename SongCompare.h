@@ -120,7 +120,7 @@ void textCompare(std::string fileName) {
 
 		score /= (double)charactersIncluded;
 
-		//if the score similarity is 75% or over than we can effectively say the songs are the same:
-		if (score < 0.5) std::cout << i + 1 << ": " << comparison.first << std::endl;
+		//if the score similarity is 67% or over than we can effectively say the songs are the same:
+		if (score < 0.67) std::cout << i + 1 << ": " << comparison.first << std::endl;
 	}
 }
