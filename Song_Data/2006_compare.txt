@@ -84,7 +84,7 @@
 84. You Can't Always Get What You Want	You Can't Always Get What You Want
 85. My Generation	My Generation
 86. The Ocean	The Ocean
-87. Come Together	
+87. Come Together	Come Together
 88. Wonderful Tonight	Wonderful Tonight
 89. Wanted: Dead or Alive	Wanted Dead Or Alive
 90. Behind Blue Eyes	Behind Blue Eyes
@@ -275,7 +275,7 @@
 275. All my Love	All My Love
 276. All Day and All of the Night	All Day and All of the Night
 277. Help!	Help!
-278. Blinded By The Light	
+278. Blinded By The Light	Blinded By The Light
 279. Alive	Alive
 280. Mother's Little Helper	Mother's Little Helper
 281. Smells Like Teen Spirit	Smells Like Teen Spirit
@@ -721,7 +721,7 @@
 721. I'm No Angel	I'm No Angel
 722. Down On Me	Down On Me
 723. Hollywood Nights	Hollywood Nights
-724. Rock and Roll	
+724. Rock and Roll	Rock and Roll Ain't Noise Pollution
 725. Hold The Line	Hold the Line
 726. Bad	Bad
 727. Are You Gonna Go My Way?	Are You Gonna Go My Way
