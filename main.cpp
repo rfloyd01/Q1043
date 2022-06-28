@@ -275,7 +275,7 @@ int main()
 
 	////std::cout << "There are currently " << artist_missing << " lines of data without an artist" << std::endl;
 
-textCompare("2009_compare");
+    textCompare("2011_compare");
 
 	std::cout << "Ran in ";
 	std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - run_time).count() / 1000000000.0;
@@ -290,14 +290,14 @@ textCompare("2009_compare");
 //Current Issues
 //1. Songs that are spelt the same, but with different capital letters aren't being recognized as the same song.
 //   i.e. 25 or 6 To 4, 25 Or 6 To 4 and 25 or 6 to 4 are all counted as different songs when they're clearly the same.
-// (complete): this brought the amount fo distinct songs from ~3900 to ~2400
+//   (complete): this brought the amount fo distinct songs from ~3900 to ~2400
 
 //2. Songs with the same name but by different artists can overwrite eachother, i.e. All Along the Watchtower by Jimi
 //   Hendrix and Bob Dylan
-//(in progress) This appears to be working, there were a lot more repeats per year than I though, for example there are
-// at least four songs called "Dreams" that are by different artists appearing in various years. Looking at the rankings for
-//all along the watchtower though, it appears that some data is going into the wrong row at times, so this still may need a
-//little work.
+//   (in progress) This appears to be working, there were a lot more repeats per year than I though, for example there are
+//   at least four songs called "Dreams" that are by different artists appearing in various years. Looking at the rankings for
+//   all along the watchtower though, it appears that some data is going into the wrong row at times, so this still may need a
+//   little work.
 
 //3. There may be something wrong with the alphabetical algorithm when it comes to checking a space against a letter.
 //   The parsed data has a section of songs that looks like this: American Girl, American Pie, America, American Girl,
