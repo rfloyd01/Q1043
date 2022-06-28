@@ -57,7 +57,7 @@
 57. Who Are You	Who Are You
 58. Sweet Emotion	Sweet Emotion
 59. Scenes From An Italian Restaurant	Scenes from an Italian Restaurant
-60. One	
+60. One	One
 61. You Shook Me All Night Long	You Shook Me All Night Long
 62. Roundabout	Roundabout
 63. Paradise By The Dashboard Light	Paradise By the Dashboard Light
@@ -227,7 +227,7 @@
 227. Another One Bites The Dust	Another One Bites The Dust
 228. Honky Tonk Women	Honky Tonk Women
 229. Melissa	Melissa
-230. Ziggy Stardust/Suffragette City	ziggy stardust
+230. Ziggy Stardust/Suffragette City	Ziggy Stardust / Suffragette City
 231. When The Levee Breaks	When the Levee Breaks
 232. Closer To The Heart	Closer To The Heart
 233. Badge	Badge
@@ -237,7 +237,7 @@
 237. Tuesday Afternoon	Tuesday Afternoon
 238. Tangled Up In Blue	Tangled up in Blue
 239. Help!	Help!
-240. Turn The Page	Turn the Page
+240. Turn The Page	Turn The Page
 241. Good Vibrations	Good Vibrations
 242. The End	The End
 243. Maybe I'm Amazed	Maybe I'm Amazed
@@ -654,7 +654,7 @@
 654. My Hometown	My Hometown
 655. No One To Run With	No One to Run With
 656. Travelin' Band	Travelin' Band
-657. Don't Do Me Like That	Don't Fade On Me
+657. Don't Do Me Like That	Don't Do Me Like That
 658. As Tears Go By	As Tears Go By
 659. Hey Nineteen	Hey Nineteen
 660. Taxman	Taxman
@@ -760,7 +760,7 @@
 760. Atlantic City	Atlantic City
 761. Movin' Out	Movin' Out (Anthony's Song)
 762. The Core	The Core
-763. Radio Free Europe	Radio free Europe
+763. Radio Free Europe	Radio Free Europe
 764. Wasted Time	Wasted Time
 765. Dreams	Dreams
 766. Rock 'N Me	Rock'n Me
@@ -894,7 +894,7 @@
 894. Rooster	Rooster
 895. Separate Ways	Separate Ways (Worlds Apart)
 896. 2 Tickets To Paradise	Two Tickets to Paradise
-897. Rock N Roll	Rock N Roll
+897. Rock N Roll	Rock And Roll Music
 898. Brothers In Arms	Brothers in Arms
 899. Free Ride	Free Ride
 900. Surfin' U.S.A.	Surfin' U.S.A.
@@ -989,7 +989,7 @@
 989. Ventura Highway	Ventura Highway
 990. Lyin' Eyes	Lyin' Eyes
 991. Baby Please Don't Go	Baby Please Don't Go
-992. Into The Great Wide Open	Into the great wide open
+992. Into The Great Wide Open	Into the Great Wide Open
 993. Substitute	Substitute
 994. Rocks Off	Rocks Off
 995. The Final Cut	The Final Cut
