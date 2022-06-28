@@ -275,7 +275,7 @@ int main()
 
 	////std::cout << "There are currently " << artist_missing << " lines of data without an artist" << std::endl;
 
-    textCompare("2011_compare");
+    textCompare("2012_compare");
 
 	std::cout << "Ran in ";
 	std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - run_time).count() / 1000000000.0;
