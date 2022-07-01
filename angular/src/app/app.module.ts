@@ -9,6 +9,7 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { CallbackComponent } from './components/callback/callback.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SongDisplayComponent } from './components/song-display/song-display.component';
+import { SpotifyAPIComponent } from './components/spotify-api/spotify-api.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { SongDisplayComponent } from './components/song-display/song-display.com
     LoginComponent,
     MainPageComponent,
     CallbackComponent,
-    SongDisplayComponent
+    SongDisplayComponent,
+    SpotifyAPIComponent
   ],
   imports: [
     BrowserModule,
