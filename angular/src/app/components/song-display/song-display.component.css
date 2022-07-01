@@ -1,0 +1,18 @@
+.card{
+    border-radius: .5rem;
+    background-color:#474C55 ;
+    box-shadow: 7px 7px 7px #f26925;
+    display: inline-block;
+  }
+  
+.card-header{
+    text-align: center;
+    background-color:#f26925 ;
+  }
+  
+.album-artwork{
+    margin: 2rem;
+    border-radius: 3rem;
+    width: 75%;
+    height: 75%;
+  }
