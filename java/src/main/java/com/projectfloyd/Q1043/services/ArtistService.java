@@ -44,7 +44,6 @@ public class ArtistService {
     }
 
     public Artist addArtist(Artist artist) {
-        //System.out.println("Trying to create artst: " + artist.getName());
         return artistDAO.save(artist);
     }
 

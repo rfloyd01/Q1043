@@ -86,7 +86,6 @@ public class AlbumService {
         //database, but also the artist potentially. This function will call the Artist service
         //to see if the artist exists, if not the artist service will create the artist.
         try {
-            //System.out.println("Trying to create album: " + album.getTitle());
             Artist artist = artistService.getArtistByName(album.getArtist().getName());
             if (artist == null) {
                 //We need to create the artist before adding the album to the database
