@@ -1,7 +1,7 @@
-.card{
-    border-radius: .5rem;
-    background-color:#474C55 ;
-    box-shadow: 7px 7px 7px #f26925;
+.song-display{
+    border: solid;
+    padding: 10px;
+    max-width: 750px;
     display: inline-block;
   }
   
@@ -11,8 +11,22 @@
   }
   
 .album-artwork{
-    margin: 2rem;
-    border-radius: 3rem;
-    width: 75%;
-    height: 75%;
-  }
+  /*Songs in Spotify's DB are saved as 640x640 pixels*/
+  width: 33%;
+  height: 33%;
+  border:solid;
+  float: left;
+}
+
+.song-information {
+  margin-right: 10px;
+  float:left;
+}
+
+h4 {
+  margin: 2px;;
+}
+
+h2 {
+  margin: 5px;
+}

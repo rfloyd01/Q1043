@@ -1,7 +1,11 @@
-<span class="card">
-    <div style="display: inline-block;">
-        <h2>Title = {{song.title}}</h2>
-        <h2>Artist = {{song.artist}}</h2>
-        <h2>Popularity = {{song.popularity}}</h2>
+<div class="song-display">
+    <div class="song-information">
+        <h2><u>{{song.title}}</u></h2>
+        <h4>Artist: {{song.artist}}</h4>
+        <h4>Album: {{song.album.title}}</h4>
+        <h4>Released: {{song.album.releaseYear}}</h4>
+        <h4>Spotify Popularity: {{song.popularity}}</h4>
+        <a href="{{songLink}}" target="_blank">Listen on Spotify</a>
     </div>
-</span>
+    <img class="album-artwork" [src]="albumArtworkSource" (error)="notLoaded()">
+</div>

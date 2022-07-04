@@ -1,0 +1,196 @@
+/*CSS file for styling of the project euler side navigation bar*/
+:host {
+    display:flex;
+}
+
+:root {
+    --color-euler-orange: rgb(255, 153, 0);
+    --color-light-euler-orange: rgb(255, 172, 0);
+}
+
+/* Standard SideNav settings */
+#sidenav-placeholder {
+    width: 100px;
+    margin-right: 10px;
+    float: left;
+}
+.Side_Nav {
+    background-color: #555;
+    width: 100px;
+    float: left;
+    margin-right: 10px;
+    border: solid;
+    text-align: center;
+}
+.Side_Nav a {
+    display: inline-block;
+    color: #f2f2f2;
+    text-align: center;
+    width: 80px;
+    padding: 10px;
+    text-decoration: none;
+    font-size: 17px;
+}
+.Side_Nav button {
+    display: inline-block;
+    background-color: #555;
+    color: white;
+    text-align: center;
+    width: 100%;
+    text-decoration: none;
+    font-size: 17px;
+    border: none;
+    padding-top: 15px;
+    padding-bottom: 15px
+}
+.Side_Nav button:hover {
+    cursor: pointer;
+    background-color: gray;
+}
+.Side_Nav .Box {
+    display: inline-block;
+    color: #f2f2f2;
+    text-align: center;
+    width: 80px;
+    padding: 10px;
+    text-decoration: none;
+    font-size: 17px;
+}
+/*Pop-out menu for side bar*/
+.popout {
+    float: right;
+    overflow: hidden;
+}
+.popout-content {
+    display: inline-block;
+    visibility: hidden;
+    position: absolute;
+    text-align: center;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+.popout-content a {
+    float: none;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    width: 100px;
+}
+.popout-content a:hover {
+    background-color: #ddd;
+    color: black;
+}
+.popout:hover .popout-content {
+    visibility: visible;
+}
+
+/*individual side bar settings*/
+/*Home Top Tab*/
+.Home_Side_Nav a:hover {
+    background-color: var(--color-home-light-yellow);
+    color: black;
+}
+/*Overview Page*/
+.Home_Overview .Home_Side_Overview {
+    background-color: var(--color-home-yellow);
+}
+
+/*Project Top Tab*/
+/*Golf Chip Sub-Tab*/
+.Golf_Chip_Side_Nav .Box:hover {
+    background-color: lightblue;
+}
+.Golf_Chip_Overview .Golf_Chip_Side_Overview {
+    background-color: blue;
+}
+.Golf_Chip_Video .Golf_Chip_Side_Video {
+    background-color: blue;
+}
+
+/*Coding Top Tab*/
+/*Project Euler Sub-Tab*/
+.Euler_Side_Nav a:hover {
+    color: black;
+    background-color: var(--color-pale-orange);
+}
+/*Project Euler About Side Tab*/
+.Project_Euler_About #euler-about {
+    background-color: var(--color-light-euler-orange);
+}
+#euler-about:hover {
+    background-color: var(--color-light-euler-orange);
+    background-color: var(--color-pale-orange);
+}
+
+/*Project Euler Problems Overview Side Tab*/
+.Project_Euler_Overview #euler-side-overview {
+    background-color: var(--color-5percent);
+}
+#euler-side-overview:hover {
+    color: black;
+    background-color: var(--color-pale-orange);
+}
+
+/*Project Euler Problems 1-50 Side Tab*/
+.Project_Euler_Problems1 .side_problems1 {
+    background-color: var(--color-light-euler-orange);
+}
+.side_problems1:hover {
+    color: black;
+    background-color: var(--color-pale-orange);
+}
+
+/*Project Euler Problems 51-100 Side Tab*/
+.Project_Euler_Problems2 .side_problems2 {
+    background-color: var(--color-light-euler-orange);
+}
+.side_problems2:hover {
+    color: black;
+    background-color: var(--color-pale-orange);
+}
+
+/*Project Euler Problems 151-200 Side Tab*/
+.Project_Euler_Problems4 .side_problems4 {
+    background-color: var(--color-light-euler-orange);
+}
+.side_problems4:hover {
+    color: black;
+    background-color: var(--color-pale-orange);
+}
+
+/*Project Euler Problems 351-400 Side Tab*/
+.Project_Euler_Problems8 .side_problems8 {
+    background-color: var(--color-light-euler-orange);
+}
+.side_problems8:hover {
+    color: black;
+    background-color: var(--color-pale-orange);
+}
+
+/*Project Euler Problems 401-450 Side Tab*/
+.Project_Euler_Problems9 .side_problems9 {
+    background-color: var(--color-light-euler-orange);
+}
+.side_problems9:hover {
+    color: black;
+    background-color: var(--color-pale-orange);
+}
+
+/*Golf Top Tab*/
+.Golf_Side_Nav a:hover {
+    background-color: var(--color-golf-pale-green);
+    color: black;
+}
+
+/*Overview Side Tab*/
+.Golf_Overview .Golf_Side_Overview {
+    background-color: var(--color-golf-light-green);
+}
+
+/*Full Swing Improvements Side Tab*/
+.Golf_Full_Swing .Golf_Side_Full_Swing_Improvements {
+    background-color: var(--color-golf-light-green);
+}

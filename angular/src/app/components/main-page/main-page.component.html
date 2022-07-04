@@ -1,1 +1,28 @@
-<p>Main Page works!</p>
+<app-side-navbar [buttonList]="buttonList" (buttonClickEvent)="buttonClicked($event)"></app-side-navbar>
+<div class="main-body">
+    <div class="body-flex" *ngIf="currentDisplay == 'Overall Data'">
+        <div class="content-block button-flex">
+            <button class="selection-button" (click)="setDataType('song')">Song Data</button>
+            <button class="selection-button" (click)="setDataType('album')">Album Data</button>
+            <button class="selection-button">Artist Data</button>
+            <button class="selection-button">Year Data</button>
+        </div>
+        <div class="content-block button-flex">
+            <button class="selection-button">Search Bar</button>
+            <button class="selection-button">Overall Rankings</button>
+            <button class="selection-button">Average Rankings</button>
+        </div>
+        <div class="content-block data-list" style="flex-grow: 1;">
+            <app-list-item *ngFor="let song of testSongs; index as i" [backgroundColorValue]="i % 2" [listValue]="i + 1" [song]="song" [displayType]="currentDataType" (clickEvent)="listItemSelected($event)"></app-list-item>
+        </div>
+    </div>
+    <div class="body-flex" *ngIf="currentDisplay == 'Overall Data'">
+        <app-song-display class="content-block" *ngIf="selectedSong != null" [song]="selectedSong"></app-song-display>
+        <div class="content-block">Graph for selection over the years</div>
+    </div>
+    <div class="body-flex" *ngIf="currentDisplay != 'Overall Data'">
+        <div class="content-block">Data List</div>
+        <div class="content-block">Data List</div>
+        <div class="content-block">Info about selection</div>
+    </div>
+</div>

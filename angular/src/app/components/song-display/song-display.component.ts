@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { Song } from 'src/app/models/song';
 
 @Component({
@@ -9,10 +9,23 @@ import { Song } from 'src/app/models/song';
 export class SongDisplayComponent implements OnInit {
 
   @Input() song!:Song;
+  albumArtworkSource!:string;
+  songLink:string = "";
 
   constructor() { }
 
   ngOnInit(): void {
+    
+  }
+
+  ngOnChanges() {
+    //this function gets called whenever a new song is selected.
+    this.songLink = "https://open.spotify.com/track/" + this.song.spotifyURI;
+    this.albumArtworkSource = this.song.album.albumArtworkURL;
+  }
+
+  notLoaded() {
+    console.log("no album loaded");
   }
 
 }

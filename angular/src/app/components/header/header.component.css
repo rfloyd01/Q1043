@@ -1,0 +1,12 @@
+.Header {
+    overflow: hidden;
+    position: relative;
+}
+.Header h1 {
+    float: left;
+}
+.Header .imgbox {
+    overflow: hidden;
+    margin-left: 5px;
+    float: right;
+}

@@ -1,0 +1,49 @@
+:host {
+    display:flex;
+}
+
+.main-body {
+    border-color: black;
+    border: solid;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.body-flex {
+    display: flex;
+    width:100%;
+    justify-content: space-around;
+}
+
+.content-block {
+    /*border: solid;*/
+    margin: 10px;
+}
+
+.button-flex {
+    display: flex;
+    flex-direction: column;
+}
+
+.selection-button {
+    background-color: darkgoldenrod;
+    width: 125px;
+    height: 33px;
+    margin: 10px;
+}
+
+.selection-button:hover {
+    background-color: gold;
+    cursor: pointer;
+}
+
+.data-list {
+    max-height: 185px;
+    overflow-y: auto;
+    border: solid;
+    padding: 10px;
+    background-color: black;
+}
