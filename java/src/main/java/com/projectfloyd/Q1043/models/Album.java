@@ -22,11 +22,11 @@ public class Album {
     private String albumArtworkURL;
 
     @ManyToOne
-    @JsonBackReference
+    //@JsonBackReference
     private Artist artist;
 
     @OneToMany(mappedBy = "album")
-    @JsonManagedReference
+    //@JsonManagedReference
     private List<Song> songs;
 
     //CONSTRUCTORS

@@ -23,7 +23,7 @@ public class Song {
     private String artist;
 
     @ManyToOne
-    @JsonBackReference
+    //@JsonBackReference
     private Album album;
 
     private String spotifyURI;

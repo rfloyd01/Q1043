@@ -9,11 +9,16 @@
         </div>
         <div class="content-block button-flex">
             <button class="selection-button">Search Bar</button>
-            <button class="selection-button">Overall Rankings</button>
+            <button class="selection-button" style="float:left;" (click)="getSongsByOverallRankings()">
+                <div style="display:flex; width:100%">
+                    <p style="margin:0px; float:left">Overall Rankings</p>
+                    <img class="button-image" src="{{overallRankingsDirectionImage}}">
+                </div>   
+            </button>
             <button class="selection-button">Average Rankings</button>
         </div>
         <div class="content-block data-list" style="flex-grow: 1;">
-            <app-list-item *ngFor="let song of testSongs; index as i" [backgroundColorValue]="i % 2" [listValue]="i + 1" [song]="song" [displayType]="currentDataType" (clickEvent)="listItemSelected($event)"></app-list-item>
+            <app-list-item *ngFor="let song of songs; index as i" [backgroundColorValue]="i % 2" [listValue]="i + 1" [song]="song" [displayType]="currentDataType" (clickEvent)="listItemSelected($event)"></app-list-item>
         </div>
     </div>
     <div class="body-flex" *ngIf="currentDisplay == 'Overall Data'">

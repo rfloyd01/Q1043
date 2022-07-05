@@ -29,7 +29,13 @@ public class SongService {
 
     public Song getSongById(int id) {
         Song song = songDAO.findById(id).orElse(null);
-        if (song != null) song.createRankingsArray();
+        if (song != null) {
+            //Create the rankings array, and also remove the Album list from the artist object
+            //and the song list from the album object to avoid stack overflow when creating JSON response.
+            song.createRankingsArray();
+            song.getAlbum().getArtist().setAlbums(new ArrayList<>());
+            song.getAlbum().setSongs(new ArrayList<>());
+        }
         return song;
     }
 
@@ -197,8 +203,14 @@ public class SongService {
             Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(dir, sort));
             Page<Song> page = songDAO.findAll(pageable);
 
-            //once we have the page, go through all the items and create the rankings arrays
-            for (Song song : page.getContent()) song.createRankingsArray();
+            //once we have the page, go through all the items and create the rankings arrays. Also, remove the song
+            //arrays from each Album object, and the album arrays from each artist object to we don't have issues
+            //when trying to create JSON responses.
+            for (Song song : page.getContent()) {
+                song.createRankingsArray();
+                song.getAlbum().getArtist().setAlbums(new ArrayList<>());
+                song.getAlbum().setSongs(new ArrayList<>());
+            }
             return page;
         }
         else return null; //we can only sort by 'average' or 'overall'

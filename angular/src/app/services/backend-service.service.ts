@@ -51,7 +51,11 @@ export class BackendServiceService {
     return this.http.post<boolean>(this.backendUrl + '/songs', songData);
   }
 
-  getPaginatedSongs(pageNumber:number, pageSize:number):Observable<Song[]> {
-    
+  getPaginatedSongsByRank(pageNumber:number, pageSize:number, sortType:string, direction?:string):Observable<any> {
+    //This function returns a Java Page object. I didn't want to go through the hassle of creating the same object
+    //on the front end (actually for all I know it's already built-in) so I decided to just return an 'any' object.
+    let dir:string = "asc"; //default to ascending order
+    if (direction) dir = direction;
+    return this.http.get<any>(this.backendUrl + '/songs?pageNumber=' + pageNumber + '&pageSize=' + pageSize + '&sort=' + sortType + '&direction=' + dir );
   }
 }

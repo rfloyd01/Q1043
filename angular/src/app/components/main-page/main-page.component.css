@@ -30,7 +30,7 @@
 
 .selection-button {
     background-color: darkgoldenrod;
-    width: 125px;
+    /*width: 125px;*/
     height: 33px;
     margin: 10px;
 }
@@ -46,4 +46,13 @@
     border: solid;
     padding: 10px;
     background-color: black;
+}
+
+.button-image {
+    width: 30px;
+    height: auto;
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    margin: 0;
 }

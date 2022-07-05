@@ -6,6 +6,7 @@ import { Chart, ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 
 import { default as Annotation } from 'chartjs-plugin-annotation'
+import { BackendServiceService } from 'src/app/services/backend-service.service';
 
 @Component({
   selector: 'app-main-page',
@@ -14,7 +15,7 @@ import { default as Annotation } from 'chartjs-plugin-annotation'
 })
 export class MainPageComponent implements OnInit {
 
-  constructor() {
+  constructor(private backendService:BackendServiceService) {
     Chart.register(Annotation);
   }
 
@@ -23,11 +24,28 @@ export class MainPageComponent implements OnInit {
   colorOptions:string[] = ["white", "lightgrey"];
   selectedSong!:Song;
   currentDataType:string = "song";
+  pageNumber:number = 0;
+  pageSize:number = 20;
 
-  testSongs:Song[] = [];
+  overallRankingsDirection:string = "asc";
+  overallRankingsDirectionImage:string = "assets/down_arrow.png";
+  averageRankingsDirection:string = "asc";
+  currentRankingType:string = "overallScore";
+
+  //testSongs:Song[] = [];
+  songs:Song[] = [];
 
   ngOnInit(): void {
-    this.addTestSongs();
+    //this.addTestSongs();
+    this.backendService.getPaginatedSongsByRank(this.pageNumber, this.pageSize, "overallScore").subscribe(res => {
+      //this function gives us a Java page object, for now we really only want the 'content' portion of it.
+      let foundSongs:Song[] = res['content'];
+      for (let song of foundSongs) {
+        this.songs.push(song);
+        console.log(song);
+      }
+      
+    })
   }
 
   buttonClicked(value:string) {
@@ -67,17 +85,17 @@ export class MainPageComponent implements OnInit {
 
     //JUST WHILE TESTING: The below two lines should force the list to re-render.
     //Add an empty song and then delete it.
-    this.addTestSongs();
+    //this.addTestSongs();
   }
 
-  addTestSongs() {
-    this.testSongs = [];
-    let stairwayRanks:number[] = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-    let rhapsodyRanks:number[] = [44,	16,	12,	19,	8,	16,	18,	13,	9,	12,	5,	3,	4,	8,	7,	10,	7,	2,	2,	2,	2]
-    this.testSongs.push(new Song(1, "Stairway to Heaven", "Led Zepplin", new Album(1, "Led Zeppelin IV", 1971, 8, "5EyIDBAqhnlkAHqvPRwdbX", "https://i.scdn.co/image/ab67616d0000b2734509204d0860cc0cc67e83dc", new Artist(1, "Led Zeppelin", []), []), "0RO9W1xJoUEpq5MEelddFb", 61, stairwayRanks, 1, 1, 1, 1, "Mighty"));
-    this.testSongs.push(new Song(2, "Bohemian Rhapsody", "Queen", new Album(2, "A Night at the Opera", 1975, 12, "7HVoV2lgVsmuiHsjbbUJB4", "https://i.scdn.co/image/ab67616d0000b2733025a441495664948b809537", new Artist(2, "Queen", []), []), "5eIDxmWYxRA0HJBYM9bIIS", 38, rhapsodyRanks, 2, 2, 2, 2, "Less Mighty"));
+  // addTestSongs() {
+  //   this.testSongs = [];
+  //   let stairwayRanks:number[] = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+  //   let rhapsodyRanks:number[] = [44,	16,	12,	19,	8,	16,	18,	13,	9,	12,	5,	3,	4,	8,	7,	10,	7,	2,	2,	2,	2]
+  //   this.testSongs.push(new Song(1, "Stairway to Heaven", "Led Zepplin", new Album(1, "Led Zeppelin IV", 1971, 8, "5EyIDBAqhnlkAHqvPRwdbX", "https://i.scdn.co/image/ab67616d0000b2734509204d0860cc0cc67e83dc", new Artist(1, "Led Zeppelin", []), []), "0RO9W1xJoUEpq5MEelddFb", 61, stairwayRanks, 1, 1, 1, 1, "Mighty"));
+  //   this.testSongs.push(new Song(2, "Bohemian Rhapsody", "Queen", new Album(2, "A Night at the Opera", 1975, 12, "7HVoV2lgVsmuiHsjbbUJB4", "https://i.scdn.co/image/ab67616d0000b2733025a441495664948b809537", new Artist(2, "Queen", []), []), "5eIDxmWYxRA0HJBYM9bIIS", 38, rhapsodyRanks, 2, 2, 2, 2, "Less Mighty"));
     
-  }
+  // }
 
   //The below items are for rendering charts
   public lineChartData!: ChartConfiguration['data'];
@@ -108,6 +126,42 @@ export class MainPageComponent implements OnInit {
 
   public chartHovered({ event, active }: { event?: ChartEvent, active?: {}[] }): void {
     console.log(event, active);
+  }
+
+  getSongsByOverallRankings() {
+    if (this.currentRankingType == "overallScore") {
+      //since we're already looking at the overall score, clicking this button will change the direction of the ordering
+      //as well as flipping the appropriate arrow.
+      
+      //First, delete the current song array
+      this.songs = [];
+
+      //Then, change the direction variable
+      this.overallRankingsDirection = (this.overallRankingsDirection == "asc") ? "desc" : "asc";
+      this.overallRankingsDirectionImage = (this.overallRankingsDirectionImage == "assets/down_arrow.png") ? "assets/up_arrow.png" : "assets/down_arrow.png";
+    }
+    else {
+      //we're currently looking at the average score so clicking the overall rankings button shouldn't swap the 
+      //direction of the order.
+      this.currentRankingType = "overallScore";
+    }
+
+    //reset the pagination page number
+    this.pageNumber = 0;
+
+    //and then perform the backend call
+    this.backendService.getPaginatedSongsByRank(this.pageNumber, this.pageSize, this.currentRankingType, this.overallRankingsDirection).subscribe(res => {
+      //this function gives us a Java page object, for now we really only want the 'content' portion of it.
+      let foundSongs:Song[] = res['content'];
+      for (let song of foundSongs) {
+        this.songs.push(song);
+        console.log(song);
+      }
+
+      //change the selected song
+      this.selectedSong = this.songs[0];
+      
+    })
   }
 
 }

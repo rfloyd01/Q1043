@@ -17,7 +17,7 @@ public class Artist {
     private String name;
 
     @OneToMany(mappedBy = "artist")
-    @JsonManagedReference
+    //@JsonManagedReference
     private List<Album> albums;
 
     //CONSTRUCTORS
