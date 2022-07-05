@@ -208,8 +208,11 @@ public class SongService {
             //when trying to create JSON responses.
             for (Song song : page.getContent()) {
                 song.createRankingsArray();
-                song.getAlbum().getArtist().setAlbums(new ArrayList<>());
-                song.getAlbum().setSongs(new ArrayList<>());
+                Album album = song.getAlbum();
+                if (album != null) {
+                    song.getAlbum().getArtist().setAlbums(new ArrayList<>());
+                    song.getAlbum().setSongs(new ArrayList<>());
+                }
             }
             return page;
         }

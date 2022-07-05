@@ -6,6 +6,9 @@
         <h4>Released: {{song.album.releaseYear}}</h4>
         <h4>Spotify Popularity: {{song.popularity}}</h4>
         <a href="{{songLink}}" target="_blank">Listen on Spotify</a>
+        <br><br>
+        <h4>Notes:</h4>
+        <p style="margin:0px;">{{song.notes}}</p>
     </div>
     <img class="album-artwork" [src]="albumArtworkSource" (error)="notLoaded()">
 </div>

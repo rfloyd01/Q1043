@@ -8,16 +8,24 @@
             <button class="selection-button">Year Data</button>
         </div>
         <div class="content-block button-flex">
-            <button class="selection-button">Search Bar</button>
+            <div style="display:flex; align-items: center;">
+                <input class="search-bar" placeholder="jump to number...">
+                <button class="search-button">Go</button>
+            </div>
             <button class="selection-button" style="float:left;" (click)="getSongsByOverallRankings()">
                 <div style="display:flex; width:100%">
                     <p style="margin:0px; float:left">Overall Rankings</p>
                     <img class="button-image" src="{{overallRankingsDirectionImage}}">
                 </div>   
             </button>
-            <button class="selection-button">Average Rankings</button>
+            <button class="selection-button" style="float:left;" (click)="getSongsByAverageRankings()">
+                <div style="display:flex; width:100%">
+                    <p style="margin:0px; float:left">Average Rankings</p>
+                    <img class="button-image" src="{{averageRankingsDirectionImage}}">
+                </div>  
+            </button>
         </div>
-        <div class="content-block data-list" style="flex-grow: 1;">
+        <div class="content-block data-list" style="flex-grow: 1;" (scroll)="listScrollEventHandler($event)">
             <app-list-item *ngFor="let song of songs; index as i" [backgroundColorValue]="i % 2" [listValue]="listStart - i * flip" [song]="song" [displayType]="currentDataType" (clickEvent)="listItemSelected($event)"></app-list-item>
         </div>
     </div>

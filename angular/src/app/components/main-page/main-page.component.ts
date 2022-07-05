@@ -22,17 +22,23 @@ export class MainPageComponent implements OnInit {
   buttonList:string[] = ["Overall Data", "2021", "2020", "2019"];
   currentDisplay:string = "Overall Data";
   colorOptions:string[] = ["white", "lightgrey"];
-  selectedSong!:Song;
+  selectedSong!:Song|null;
   currentDataType:string = "song";
 
   //Pagination variables
-  pageNumber:number = 0;
+  pageNumber:number = 0; //we load a few pages at a time, this number represents the lowest page we currently have
   pageSize:number = 20;
   totalListSize:number = 0;
+  totalPages:number = 0;
+  paginationPadding:number = this.pageSize / 2; //get next data set when we're 10 items away from bottom
+  scrollHeightTarget:number = 0;
+  scrollEventComplete:boolean = true;
+  maximumPages:number = 3;
 
   overallRankingsDirection:string = "asc";
   overallRankingsDirectionImage:string = "assets/down_arrow.png";
   averageRankingsDirection:string = "asc";
+  averageRankingsDirectionImage:string = "assets/down_arrow.png";
   currentRankingType:string = "overallScore";
 
   //testSongs:Song[] = [];
@@ -41,16 +47,16 @@ export class MainPageComponent implements OnInit {
   flip:number = -1;
 
   ngOnInit(): void {
-    //this.addTestSongs();
-    this.backendService.getPaginatedSongsByRank(this.pageNumber, this.pageSize, "overallScore").subscribe(res => {
+    //when initially loading data, we grab a few pages at the same time (denoted by the maximumPages variable)
+    this.backendService.getPaginatedSongsByRank(this.pageNumber, this.maximumPages * this.pageSize, "overallScore").subscribe(res => {
       //this function gives us a Java page object, for now we really only want the 'content' portion of it.
       let foundSongs:Song[] = res['content'];
       for (let song of foundSongs) {
         this.songs.push(song);
-        console.log(song);
       }
 
       this.totalListSize = res['totalElements'];
+      this.totalPages = res['totalPages'];
     })
   }
 
@@ -61,18 +67,28 @@ export class MainPageComponent implements OnInit {
   listItemSelected(song:Song) {
     //first update the selected song
     this.selectedSong = song;
+
+    //in order to highlight that lower ranked songs are better than higher
+    //ranked ones, we iterate over the ranking data and invert the values
+    //(i.e. song 1 gets a value of 1043 and song 1043 gets a value of 1) while
+    //unranked years remain at zero
+    let rankingCopy = this.selectedSong.rankings;
+    for (let i:number = 0; i < rankingCopy.length; i++) {
+      if (rankingCopy[i] > 0) rankingCopy[i] = 1044 - rankingCopy[i];
+    }
+
     this.lineChartData = {
       datasets: [
         {
-          data: this.selectedSong.rankings,
-          label: 'Rank by Year',
+          data: rankingCopy,
+          label: 'Inverse Rank by Year',
           backgroundColor: 'rgba(148,159,177,0.2)',
           borderColor: 'rgba(148,159,177,1)',
           pointBackgroundColor: 'rgba(148,159,177,1)',
           pointBorderColor: '#fff',
           pointHoverBackgroundColor: '#fff',
           pointHoverBorderColor: 'rgba(148,159,177,0.8)',
-          fill: 'origin',
+          fill: 'origin'
         }
       ],
       labels: [ '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010',
@@ -115,8 +131,10 @@ export class MainPageComponent implements OnInit {
     scales: {
       //this empty structure is used as a placeholder for dynamic theming
       x:{},
-      'y-axis-0': {
-        position: 'left',
+      y:{
+        beginAtZero: true,
+        min: 0,
+        max: 1043
       }
     }
   };
@@ -138,15 +156,10 @@ export class MainPageComponent implements OnInit {
     if (this.currentRankingType == "overallScore") {
       //since we're already looking at the overall score, clicking this button will change the direction of the ordering
       //as well as flipping the appropriate arrow.
-      
-      //First, delete the current song array
-      this.songs = [];
 
       //Then, change the direction variable
       this.overallRankingsDirection = (this.overallRankingsDirection == "asc") ? "desc" : "asc";
       this.overallRankingsDirectionImage = (this.overallRankingsDirectionImage == "assets/down_arrow.png") ? "assets/up_arrow.png" : "assets/down_arrow.png";
-      this.listStart = (this.listStart == 1) ? this.totalListSize : 1;
-      this.flip *= -1;
     }
     else {
       //we're currently looking at the average score so clicking the overall rankings button shouldn't swap the 
@@ -154,22 +167,125 @@ export class MainPageComponent implements OnInit {
       this.currentRankingType = "overallScore";
     }
 
+    //First, delete the current song array
+    this.songs = [];
+
     //reset the pagination page number
     this.pageNumber = 0;
 
+    //Finally, make sure that the numbers in the list are going in the right direction
+    this.listStart = (this.overallRankingsDirection == "asc") ? 1: this.totalListSize;
+    this.flip = (this.overallRankingsDirection == "asc") ? -1 : 1;
+
     //and then perform the backend call
-    this.backendService.getPaginatedSongsByRank(this.pageNumber, this.pageSize, this.currentRankingType, this.overallRankingsDirection).subscribe(res => {
+    this.backendService.getPaginatedSongsByRank(this.pageNumber, this.pageSize * this.maximumPages, this.currentRankingType, this.overallRankingsDirection).subscribe(res => {
       //this function gives us a Java page object, for now we really only want the 'content' portion of it.
       let foundSongs:Song[] = res['content'];
       for (let song of foundSongs) {
         this.songs.push(song);
-        console.log(song);
       }
 
       //change the selected song
-      this.selectedSong = this.songs[0];
-      
+      this.selectedSong = null;
+
+      //update the total number of list elements
+      this.totalListSize = res['totalElements'];
     })
   }
 
+  getSongsByAverageRankings() {
+    if (this.currentRankingType == "averageScore") {
+      //since we're already looking at the average score, clicking this button will change the direction of the ordering
+      //as well as flipping the appropriate arrow.
+
+      //Then, change the direction variable
+      this.averageRankingsDirection = (this.averageRankingsDirection == "asc") ? "desc" : "asc";
+      this.averageRankingsDirectionImage = (this.averageRankingsDirectionImage == "assets/down_arrow.png") ? "assets/up_arrow.png" : "assets/down_arrow.png";
+    }
+    else {
+      //we're currently looking at the overall score so clicking the average rankings button shouldn't swap the 
+      //direction of the order.
+      this.currentRankingType = "averageScore";
+    }
+
+
+    //First, delete the current song array
+    this.songs = [];
+
+    //reset the pagination page number
+    this.pageNumber = 0;
+
+    //Finally, make sure that the numbers in the list are going in the right direction
+    this.listStart = (this.averageRankingsDirection == "asc") ? 1: this.totalListSize;
+    this.flip = (this.averageRankingsDirection == "asc") ? -1 : 1;
+
+    //and then perform the backend call
+    this.backendService.getPaginatedSongsByRank(this.pageNumber, this.pageSize * this.maximumPages, this.currentRankingType, this.averageRankingsDirection).subscribe(res => {
+      //this function gives us a Java page object, for now we really only want the 'content' portion of it.
+      let foundSongs:Song[] = res['content'];
+      for (let song of foundSongs) {
+        this.songs.push(song);
+      }
+
+      //change the selected song
+      this.selectedSong = null;
+
+      //update the total number of list elements
+      this.totalListSize = res['totalElements'];
+    })
+  }
+
+  listScrollEventHandler(event:Event) {
+    if (this.scrollEventComplete) {
+      let itemList = event.target as Element;
+
+      //we want to set off the next paginated data request when we get close to the
+      //bottom of the list so that scrolling seems seemless. To do this we need to
+      //get the height value of the list items.
+      let listItem = itemList.children.item(0) as HTMLElement;
+      let itemHeight = listItem.offsetHeight
+
+      //I'm trying out a new kind of pagination here (for me). Instead of continuosly adding to the bottom of the list as we scroll down,
+      //I'm going to show a maximum number of pages in the list box. As we scroll down, every new page loaded will cause the 
+      //earliest page in the list to dissapear, and likewise, when we scroll up we will grab earlier pages and erase the last
+      //page in the box.
+      if (itemList.scrollTop + itemList.clientHeight + this.paginationPadding * itemHeight >= itemList.scrollHeight) {
+        //we're near the bottom of our current list, grab another page in the positive direction (unless we alread have the final page number loaded)
+        if (this.pageNumber != (this.totalPages - this.maximumPages + 1)) {
+          this.scrollEventComplete = false; //this is to prevent multiple loads in quick succession
+          let scrollDirection:string = (this.currentRankingType == "averageScore") ? this.averageRankingsDirection : this.overallRankingsDirection;
+
+          //increment the current pagination page and make call to the back end for the next appropriate page
+          this.backendService.getPaginatedSongsByRank((this.pageNumber++) + this.maximumPages, this.pageSize, this.currentRankingType, scrollDirection).subscribe(res => {
+            //this function gives us a Java page object, for now we really only want the 'content' portion of it.
+            let foundSongs:Song[] = res['content'];
+            this.listStart -= this.pageSize * this.flip;
+            this.songs.splice(0, this.pageSize); //slice a page worth of items from the front of the array
+            this.songs = this.songs.concat(foundSongs); //add the new items to the end of the array
+            
+          });
+
+          this.scrollEventComplete = true;
+        }
+      }
+      else if (itemList.scrollTop <= this.paginationPadding * itemHeight) {
+        //we're near the top of our current list, grab another page in the negative direction (unless we already have page 0 loaded)
+        if (this.pageNumber != 0) {
+          this.scrollEventComplete = false; //this is to prevent multiple loads in quick succession
+          let scrollDirection:string = (this.currentRankingType == "averageScore") ? this.averageRankingsDirection : this.overallRankingsDirection;
+
+          //increment the current pagination page and make call to the back end for next data set
+          this.backendService.getPaginatedSongsByRank(--this.pageNumber, this.pageSize, this.currentRankingType, scrollDirection).subscribe(res => {
+            //this function gives us a Java page object, for now we really only want the 'content' portion of it.
+            let foundSongs:Song[] = res['content'];
+            this.songs.splice(this.songs.length - this.pageSize); //slice a page worth of items from the end of the array
+            this.listStart += this.pageSize * this.flip;
+            this.songs = foundSongs.concat(this.songs);
+          });
+
+          this.scrollEventComplete = true;
+        }
+      }
+    }
+  }
 }
