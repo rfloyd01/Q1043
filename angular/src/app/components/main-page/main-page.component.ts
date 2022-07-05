@@ -24,8 +24,11 @@ export class MainPageComponent implements OnInit {
   colorOptions:string[] = ["white", "lightgrey"];
   selectedSong!:Song;
   currentDataType:string = "song";
+
+  //Pagination variables
   pageNumber:number = 0;
   pageSize:number = 20;
+  totalListSize:number = 0;
 
   overallRankingsDirection:string = "asc";
   overallRankingsDirectionImage:string = "assets/down_arrow.png";
@@ -34,6 +37,8 @@ export class MainPageComponent implements OnInit {
 
   //testSongs:Song[] = [];
   songs:Song[] = [];
+  listStart:number = 1;
+  flip:number = -1;
 
   ngOnInit(): void {
     //this.addTestSongs();
@@ -44,7 +49,8 @@ export class MainPageComponent implements OnInit {
         this.songs.push(song);
         console.log(song);
       }
-      
+
+      this.totalListSize = res['totalElements'];
     })
   }
 
@@ -139,6 +145,8 @@ export class MainPageComponent implements OnInit {
       //Then, change the direction variable
       this.overallRankingsDirection = (this.overallRankingsDirection == "asc") ? "desc" : "asc";
       this.overallRankingsDirectionImage = (this.overallRankingsDirectionImage == "assets/down_arrow.png") ? "assets/up_arrow.png" : "assets/down_arrow.png";
+      this.listStart = (this.listStart == 1) ? this.totalListSize : 1;
+      this.flip *= -1;
     }
     else {
       //we're currently looking at the average score so clicking the overall rankings button shouldn't swap the 

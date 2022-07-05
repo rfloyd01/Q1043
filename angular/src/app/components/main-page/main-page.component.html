@@ -18,7 +18,7 @@
             <button class="selection-button">Average Rankings</button>
         </div>
         <div class="content-block data-list" style="flex-grow: 1;">
-            <app-list-item *ngFor="let song of songs; index as i" [backgroundColorValue]="i % 2" [listValue]="i + 1" [song]="song" [displayType]="currentDataType" (clickEvent)="listItemSelected($event)"></app-list-item>
+            <app-list-item *ngFor="let song of songs; index as i" [backgroundColorValue]="i % 2" [listValue]="listStart - i * flip" [song]="song" [displayType]="currentDataType" (clickEvent)="listItemSelected($event)"></app-list-item>
         </div>
     </div>
     <div class="body-flex" *ngIf="currentDisplay == 'Overall Data'">
