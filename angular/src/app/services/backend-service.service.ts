@@ -50,4 +50,8 @@ export class BackendServiceService {
   addCompleteSongData(songData:Song[]):Observable<boolean> {
     return this.http.post<boolean>(this.backendUrl + '/songs', songData);
   }
+
+  getPaginatedSongs(pageNumber:number, pageSize:number):Observable<Song[]> {
+    
+  }
 }

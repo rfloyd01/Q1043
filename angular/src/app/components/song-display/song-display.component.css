@@ -2,7 +2,8 @@
     border: solid;
     padding: 10px;
     max-width: 750px;
-    display: inline-block;
+    display: flex;
+    justify-content: space-around;
   }
   
 .card-header{

@@ -6,6 +6,7 @@ import com.projectfloyd.Q1043.repo.SongDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -134,5 +135,51 @@ public class SongService {
             System.out.println("Failure trying to create song: " + e.getMessage());
             return false;
         }
+    }
+
+    public Boolean generateRankings() {
+        //This function looks at each song in the database and generates two ranking values. The first ranking value
+        //is obtained by looking at the average rank for the song in the years that it's ranked. For example, a song
+        //with rankings of [10, 52, 0, 0, 15] would get an average of (10 + 52 + 15) / 3 = 25.67. The 0's get ignored.
+        //Due to the nature of this list being that lesser numbers are better than higher numbers, averaging in 0's would
+        //make songs ranked worse appear to be better. At first I considered just putting in a high number instead of 0,
+        //but couldn't settle on a number that really made sense so I decided to just ignore the numbers entirely.
+
+        //The second ranking value is what I'm calling the "overall rating". Since the "averaging rating" above ignores
+        //years where a song wasn't rated, songs that only got rated once but had a fairly good rank get overvalued. A good example
+        //of this is the Bruce Springsteen song "Radio Nowhere", which is only rated once and got a ranking of 379
+        //(in the year 2007 when the song was released). This gives it an average rank of 379. Meanwhile the song "Surrender"
+        //by Cheap Trick has an average rating of 461 but is ranked in 18 of the 21 years. In essence the overall rating
+        //rewards songs that have made the list in more years. It's obtained simply by dividing the average score by the
+        //number of years the song has made the list. Using the above example where the average score was 25.67, the
+        //overall score would be 25.67 / 3 = 8.56. Going back to the Bruce Springsteen vs. Cheap Trick example, the Burce
+        //Springsteen song would have the same average and overall score (379 / 1 = 379) whereas the Cheap Trick song
+        //would get an overall score of 461 / 18 = 25.61 which indicates that it's really much better than the Bruce
+        //song (sorry boss, but I've never even heard of that song).
+
+        Iterator<Song> it = songDAO.findAll().iterator();
+        while (it.hasNext()) {
+            Song currentSong = it.next();
+            currentSong.createRankingsArray(); //create an array to iterate through
+
+            double averageScore = 0;
+            int yearsRanked = 0;
+            int[] rankings = currentSong.getRankings();
+            for (int i = 0; i < rankings.length; i++) {
+                if (rankings[i] > 0) {
+                    averageScore += rankings[i];
+                    yearsRanked++;
+                }
+            }
+
+            //set the scores
+            currentSong.setAverageScore(averageScore / yearsRanked);
+            currentSong.setOverallScore(currentSong.getAverageScore() / yearsRanked);
+
+            //then save the song back in the database
+            songDAO.save(currentSong);
+        }
+
+        return true;
     }
 }

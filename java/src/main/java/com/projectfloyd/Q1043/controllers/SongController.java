@@ -69,4 +69,14 @@ public class SongController {
         }
     }
 
+    @PatchMapping
+    public ResponseEntity<Boolean> generateRankings() {
+        //this function looks at all of the songs in the song database and generates their
+        //ranking values by looking at all of the year rankings. (This function should really
+        //only need to be called once.
+        Boolean worked = songService.generateRankings();
+        if (worked) return ResponseEntity.status(200).body(worked);
+        else return ResponseEntity.status(400).body(worked);
+    }
+
 }
