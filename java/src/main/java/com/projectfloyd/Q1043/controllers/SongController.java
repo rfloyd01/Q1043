@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/songs")
@@ -89,6 +90,19 @@ public class SongController {
         //tells us if it should be ascending or descending.
         Page<Song> songs = songService.getPaginatedSongsByRank(pageNumber, pageSize, sort, direction);
         if (songs != null) return ResponseEntity.status(200).body(songs);
+        else return ResponseEntity.status(400).build();
+    }
+
+    @GetMapping(value = "/multiple", params = {"firstPage", "pageSize", "numberOfPages", "sort", "direction"})
+    public ResponseEntity<List<Page<Song>>> getMultiplePaginatedSongsByRank(@RequestParam int firstPage, @RequestParam int pageSize, @RequestParam int numberOfPages, @RequestParam String sort, @RequestParam String direction) {
+        //Same as the above function but lets as collect multiple pages at a time.
+        ArrayList<Page<Song>> pages = new ArrayList<>();
+
+        for (int i = 0; i < numberOfPages; i++) {
+            pages.add(songService.getPaginatedSongsByRank(firstPage + i, pageSize, sort, direction));
+        }
+
+        if (pages != null) return ResponseEntity.status(200).body(pages);
         else return ResponseEntity.status(400).build();
     }
 

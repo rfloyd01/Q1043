@@ -9,8 +9,8 @@
         </div>
         <div class="content-block button-flex">
             <div style="display:flex; align-items: center;">
-                <input class="search-bar" placeholder="jump to number...">
-                <button class="search-button">Go</button>
+                <input class="search-bar" placeholder="jump to number..." [(ngModel)]="jumpToNumber">
+                <button class="search-button" (click)="jumpTo()">Go</button>
             </div>
             <button class="selection-button" style="float:left;" (click)="getSongsByOverallRankings()">
                 <div style="display:flex; width:100%">
@@ -25,7 +25,7 @@
                 </div>  
             </button>
         </div>
-        <div class="content-block data-list" style="flex-grow: 1;" (scroll)="listScrollEventHandler($event)">
+        <div id="item-list" class="content-block data-list" style="flex-grow: 1;" (scroll)="listScrollEventHandler($event)">
             <app-list-item *ngFor="let song of songs; index as i" [backgroundColorValue]="i % 2" [listValue]="listStart - i * flip" [song]="song" [displayType]="currentDataType" (clickEvent)="listItemSelected($event)"></app-list-item>
         </div>
     </div>

@@ -8,6 +8,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { default as Annotation } from 'chartjs-plugin-annotation'
 import { BackendServiceService } from 'src/app/services/backend-service.service';
 import { ListItemComponent } from '../list-item/list-item.component';
+import { first } from 'rxjs';
 
 @Component({
   selector: 'app-main-page',
@@ -25,6 +26,7 @@ export class MainPageComponent implements OnInit {
   colorOptions:string[] = ["white", "lightgrey"];
   currentlySelectedListItem!:ListItemComponent|null;
   currentDataType:string = "song";
+  jumpToNumber!:number;
 
   //Pagination variables
   pageNumber:number = 0; //we load a few pages at a time, this number represents the lowest page we currently have
@@ -115,6 +117,38 @@ export class MainPageComponent implements OnInit {
     //JUST WHILE TESTING: The below two lines should force the list to re-render.
     //Add an empty song and then delete it.
     //this.addTestSongs();
+  }
+
+  jumpTo() {
+    //This function give a way to quickly maneuver to a far away part of the list without scrolling.
+    //It will get the appropriate pagination pages and put the jumpTo number in the middle of the
+    //list.
+    let requiredPage:number = Math.floor((this.jumpToNumber - 1) / this.pageSize);
+
+    //When the maximum page number is even the middle will be counted as the first page PAST the center. So if there
+    //were a maximum of 4 pages then the middle would be page 3 --> ((1. not middle), (2. not middle), (3. middle page), (4. not middle))
+    let firstPage:number = (requiredPage - (this.maximumPages / 2) < 0) ? 0 : requiredPage - (this.maximumPages / 2); 
+
+    //this if statement executes if the maximum page number is odd
+    if (this.maximumPages % 2 != 0) firstPage = (requiredPage - ((this.maximumPages - 1) / 2) < 0) ? 0 : requiredPage - ((this.maximumPages - 1) / 2);
+    
+    let scrollDirection:string = (this.currentRankingType == "averageScore") ? this.averageRankingsDirection : this.overallRankingsDirection;
+    this.backendService.getMultiplePaginatedSongsByRank(firstPage, this.pageSize, this.maximumPages, this.currentRankingType, scrollDirection).subscribe(res => {
+      this.songs = []; //clear the current song list
+      this.listStart = firstPage * this.pageSize + 1;
+      this.pageNumber = firstPage;
+      for (let page of res) {
+        this.songs = this.songs.concat(page['content']);
+      }
+
+      //after adding all songs to the list, we force the list viewer to scroll to the correct location
+      let list = document.getElementById('item-list') as HTMLElement;
+      let listItem = list.firstChild as HTMLElement;
+      let listItemHeight = listItem.offsetHeight;
+
+      list.scrollTo({top: (this.jumpToNumber - (firstPage * this.pageSize + 1)) * listItemHeight});
+
+    })
   }
 
   // addTestSongs() {
@@ -245,6 +279,8 @@ export class MainPageComponent implements OnInit {
   listScrollEventHandler(event:Event) {
     if (this.scrollEventComplete) {
       let itemList = event.target as Element;
+
+      console.log(itemList.scrollTop);
 
       //we want to set off the next paginated data request when we get close to the
       //bottom of the list so that scrolling seems seemless. To do this we need to

@@ -27,7 +27,6 @@ export class ListItemComponent implements OnInit {
   @Input() backgroundColorValue:number = 0;
   @Input() song!:Song;
   @Input() displayType:string = "";
-  //@Output() clickEvent = new EventEmitter<Song>();
   @Output() clickEvent = new EventEmitter<ListItemComponent>();
 
   currentlySelected:boolean = false;
@@ -37,11 +36,6 @@ export class ListItemComponent implements OnInit {
 
   bacgkroundColorOptions:string[] = ["white", "lightgrey", "lightblue"];
 
-  // clicked() {
-  //   this.clickEvent.emit(this.song);
-  //   if (!this.currentlySelected) this.setSelected();
-  //   else this.setUnselected();
-  // }
 
   clicked() {
     this.clickEvent.emit(this);
