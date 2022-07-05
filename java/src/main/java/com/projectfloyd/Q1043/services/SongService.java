@@ -4,8 +4,13 @@ import com.projectfloyd.Q1043.models.Album;
 import com.projectfloyd.Q1043.models.Song;
 import com.projectfloyd.Q1043.repo.SongDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -148,11 +153,11 @@ public class SongService {
         //The second ranking value is what I'm calling the "overall rating". Since the "averaging rating" above ignores
         //years where a song wasn't rated, songs that only got rated once but had a fairly good rank get overvalued. A good example
         //of this is the Bruce Springsteen song "Radio Nowhere", which is only rated once and got a ranking of 379
-        //(in the year 2007 when the song was released). This gives it an average rank of 379. Meanwhile the song "Surrender"
+        //(in the year 2007 when the song was released). This gives it an average rank of 379. Meanwhile, the song "Surrender"
         //by Cheap Trick has an average rating of 461 but is ranked in 18 of the 21 years. In essence the overall rating
         //rewards songs that have made the list in more years. It's obtained simply by dividing the average score by the
         //number of years the song has made the list. Using the above example where the average score was 25.67, the
-        //overall score would be 25.67 / 3 = 8.56. Going back to the Bruce Springsteen vs. Cheap Trick example, the Burce
+        //overall score would be 25.67 / 3 = 8.56. Going back to the Bruce Springsteen vs. Cheap Trick example, the Bruce
         //Springsteen song would have the same average and overall score (379 / 1 = 379) whereas the Cheap Trick song
         //would get an overall score of 461 / 18 = 25.61 which indicates that it's really much better than the Bruce
         //song (sorry boss, but I've never even heard of that song).
@@ -181,5 +186,21 @@ public class SongService {
         }
 
         return true;
+    }
+
+    public Page<Song> getPaginatedSongsByRank(int pageNumber, int pageSize, String sort, String direction) {
+        if (pageNumber < 0 || pageSize < 1) return null; //make sure the page request is valid before getting the page
+
+        if (sort.equals("averageScore") || sort.equals("overallScore")) {
+            //First get the sort direction, default to ascending
+            Sort.Direction dir = direction.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+            Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(dir, sort));
+            Page<Song> page = songDAO.findAll(pageable);
+
+            //once we have the page, go through all the items and create the rankings arrays
+            for (Song song : page.getContent()) song.createRankingsArray();
+            return page;
+        }
+        else return null; //we can only sort by 'average' or 'overall'
     }
 }

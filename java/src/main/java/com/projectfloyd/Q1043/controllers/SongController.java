@@ -3,6 +3,7 @@ package com.projectfloyd.Q1043.controllers;
 import com.projectfloyd.Q1043.models.Song;
 import com.projectfloyd.Q1043.services.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,7 +58,7 @@ public class SongController {
     }
 
     @GetMapping(params = {"title"})
-    public ResponseEntity<ArrayList<Song>> findSongById(@RequestParam String title) {
+    public ResponseEntity<ArrayList<Song>> findSongByTitle(@RequestParam String title) {
 
         ArrayList<Song> songs = (ArrayList<Song>) songService.getSongsByTitle(title);
 
@@ -77,6 +78,18 @@ public class SongController {
         Boolean worked = songService.generateRankings();
         if (worked) return ResponseEntity.status(200).body(worked);
         else return ResponseEntity.status(400).body(worked);
+    }
+
+    //Pagination Requests
+    @GetMapping(params = {"pageNumber", "pageSize", "sort", "direction"})
+    public ResponseEntity<Page<Song>> getPaginatedSongsByRank(@RequestParam int pageNumber, @RequestParam int pageSize, @RequestParam String sort, @RequestParam String direction) {
+        //There are a few different ways we can get paginated songs by rank from the db. We can get songs in
+        //order of their average rank (ascending or descending) and in order of their overall rank (ascending or
+        //descending) for a total of 4 options. The 'sort' variable let's us know which ranking to go by and 'direction'
+        //tells us if it should be ascending or descending.
+        Page<Song> songs = songService.getPaginatedSongsByRank(pageNumber, pageSize, sort, direction);
+        if (songs != null) return ResponseEntity.status(200).body(songs);
+        else return ResponseEntity.status(400).build();
     }
 
 }
