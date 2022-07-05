@@ -7,6 +7,7 @@ import { BaseChartDirective } from 'ng2-charts';
 
 import { default as Annotation } from 'chartjs-plugin-annotation'
 import { BackendServiceService } from 'src/app/services/backend-service.service';
+import { ListItemComponent } from '../list-item/list-item.component';
 
 @Component({
   selector: 'app-main-page',
@@ -22,7 +23,7 @@ export class MainPageComponent implements OnInit {
   buttonList:string[] = ["Overall Data", "2021", "2020", "2019"];
   currentDisplay:string = "Overall Data";
   colorOptions:string[] = ["white", "lightgrey"];
-  selectedSong!:Song|null;
+  currentlySelectedListItem!:ListItemComponent|null;
   currentDataType:string = "song";
 
   //Pagination variables
@@ -58,21 +59,27 @@ export class MainPageComponent implements OnInit {
       this.totalListSize = res['totalElements'];
       this.totalPages = res['totalPages'];
     })
+
+    this.currentlySelectedListItem = null; //start off with no selection
   }
 
   buttonClicked(value:string) {
     this.currentDisplay = value;
   }
 
-  listItemSelected(song:Song) {
-    //first update the selected song
-    this.selectedSong = song;
+  listItemSelected(clickedItem:ListItemComponent) {
+    //first, we reset the background color of whatever is currently selected
+    if (this.currentlySelectedListItem != null) this.currentlySelectedListItem.currentBackgroundColorValue = this.currentlySelectedListItem.backgroundColorValue;
+
+    //Update the selected song
+    this.currentlySelectedListItem = clickedItem;
+    this.currentlySelectedListItem.currentBackgroundColorValue = 2;
 
     //in order to highlight that lower ranked songs are better than higher
     //ranked ones, we iterate over the ranking data and invert the values
     //(i.e. song 1 gets a value of 1043 and song 1043 gets a value of 1) while
     //unranked years remain at zero
-    let rankingCopy = this.selectedSong.rankings;
+    let rankingCopy = this.currentlySelectedListItem.song.rankings;
     for (let i:number = 0; i < rankingCopy.length; i++) {
       if (rankingCopy[i] > 0) rankingCopy[i] = 1044 - rankingCopy[i];
     }
@@ -186,7 +193,7 @@ export class MainPageComponent implements OnInit {
       }
 
       //change the selected song
-      this.selectedSong = null;
+      this.currentlySelectedListItem = null;
 
       //update the total number of list elements
       this.totalListSize = res['totalElements'];
@@ -228,7 +235,7 @@ export class MainPageComponent implements OnInit {
       }
 
       //change the selected song
-      this.selectedSong = null;
+      this.currentlySelectedListItem = null;
 
       //update the total number of list elements
       this.totalListSize = res['totalElements'];

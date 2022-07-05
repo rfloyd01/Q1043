@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="body-flex" *ngIf="currentDisplay == 'Overall Data'">
-        <app-song-display class="content-block" *ngIf="selectedSong != null" [song]="selectedSong"></app-song-display>
+        <app-song-display class="content-block" *ngIf="currentlySelectedListItem != null" [song]="currentlySelectedListItem.song"></app-song-display>
         <div class="flex-item">
             <div style="display: block;">
             <canvas baseChart width="800" height="300"
@@ -38,7 +38,7 @@
                         [options]="lineChartOptions"
                         [type]="lineChartType"
                         (chartHover)="chartHovered($event)"
-                        (chartClick)="chartClicked($event)" *ngIf="selectedSong != null"></canvas>
+                        (chartClick)="chartClicked($event)" *ngIf="currentlySelectedListItem != null"></canvas>
             </div>
           </div>
     </div>

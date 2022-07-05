@@ -15,6 +15,7 @@ export class ListItemComponent implements OnInit {
     if (this.backgroundColorValue < -1 || this.backgroundColorValue > this.bacgkroundColorOptions.length) this.backgroundColorValue = 0;
 
     this.content = this.listValue + ". ";
+    this.currentBackgroundColorValue = this.backgroundColorValue;
 
     if (this.displayType == "song") this.content += this.song.title;
     else if (this.displayType == "artist") this.content += this.song.artist;
@@ -26,15 +27,34 @@ export class ListItemComponent implements OnInit {
   @Input() backgroundColorValue:number = 0;
   @Input() song!:Song;
   @Input() displayType:string = "";
-  @Output() clickEvent = new EventEmitter<Song>();
+  //@Output() clickEvent = new EventEmitter<Song>();
+  @Output() clickEvent = new EventEmitter<ListItemComponent>();
+
+  currentlySelected:boolean = false;
+  currentBackgroundColorValue:number = 0;
 
   content!:string;
 
-  bacgkroundColorOptions:string[] = ["white", "lightgrey"];
+  bacgkroundColorOptions:string[] = ["white", "lightgrey", "lightblue"];
+
+  // clicked() {
+  //   this.clickEvent.emit(this.song);
+  //   if (!this.currentlySelected) this.setSelected();
+  //   else this.setUnselected();
+  // }
 
   clicked() {
-    this.clickEvent.emit(this.song);
+    this.clickEvent.emit(this);
   }
 
+  setSelected() {
+    this.currentBackgroundColorValue = 2;
+    this.currentlySelected = true;
+  }
+
+  setUnselected() {
+    this.currentBackgroundColorValue = this.backgroundColorValue;
+    this.currentlySelected = false;
+  }
 
 }
