@@ -78,3 +78,7 @@
 .search-button:hover {
     cursor: pointer;
 }
+
+.table-description {
+    max-width: 600px;
+}

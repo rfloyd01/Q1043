@@ -26,6 +26,8 @@ export class MainPageComponent implements OnInit {
   colorOptions:string[] = ["white", "lightgrey"];
   currentlySelectedListItem!:ListItemComponent|null;
   currentDataType:string = "song";
+  descriptionHeader:string = "Top Songs"
+  descriptionBody!:string;
   jumpToNumber!:number;
 
   //Pagination variables
@@ -63,6 +65,7 @@ export class MainPageComponent implements OnInit {
     })
 
     this.currentlySelectedListItem = null; //start off with no selection
+    this.setDescriptionBody();
   }
 
   buttonClicked(value:string) {
@@ -123,7 +126,8 @@ export class MainPageComponent implements OnInit {
     //This function give a way to quickly maneuver to a far away part of the list without scrolling.
     //It will get the appropriate pagination pages and put the jumpTo number in the middle of the
     //list.
-    let requiredPage:number = Math.floor((this.jumpToNumber - 1) / this.pageSize);
+    let orderedJumpTo = (this.flip == -1) ? this.jumpToNumber : (this.totalListSize - this.jumpToNumber + 1);
+    let requiredPage:number = Math.floor((orderedJumpTo - 1) / this.pageSize);
 
     //When the maximum page number is even the middle will be counted as the first page PAST the center. So if there
     //were a maximum of 4 pages then the middle would be page 3 --> ((1. not middle), (2. not middle), (3. middle page), (4. not middle))
@@ -135,7 +139,8 @@ export class MainPageComponent implements OnInit {
     let scrollDirection:string = (this.currentRankingType == "averageScore") ? this.averageRankingsDirection : this.overallRankingsDirection;
     this.backendService.getMultiplePaginatedSongsByRank(firstPage, this.pageSize, this.maximumPages, this.currentRankingType, scrollDirection).subscribe(res => {
       this.songs = []; //clear the current song list
-      this.listStart = firstPage * this.pageSize + 1;
+      if (this.flip == -1) this.listStart = firstPage * this.pageSize - this.flip;
+      else this.listStart = this.totalListSize - firstPage * this.pageSize;
       this.pageNumber = firstPage;
       for (let page of res) {
         this.songs = this.songs.concat(page['content']);
@@ -146,7 +151,7 @@ export class MainPageComponent implements OnInit {
       let listItem = list.firstChild as HTMLElement;
       let listItemHeight = listItem.offsetHeight;
 
-      list.scrollTo({top: (this.jumpToNumber - (firstPage * this.pageSize + 1)) * listItemHeight});
+      list.scrollTo({top: (orderedJumpTo - (firstPage * this.pageSize + 1)) * listItemHeight});
 
     })
   }
@@ -329,6 +334,17 @@ export class MainPageComponent implements OnInit {
           this.scrollEventComplete = true;
         }
       }
+    }
+  }
+
+  setDescriptionBody() {
+    if (this.currentDataType == "song") {
+      this.descriptionBody = "This list combines all of the data from the individual years into a single place, all in all there are just under " +
+      "2000 songs that appear on the lists over the various years. This combined list can be ordered in two different ways, by 'Average Score' and " +
+      "by 'Overall Score'. The average score for a song is determined by taking the average rank of a song in every year that it made the list. The " +
+      "overall score for a song is determined by dividing the average score by the number of years the song has actually made a list. The overall " +
+      "rank is an attempt to reward songs that have been on the list more times. The buttons on the left can be used to change between data set and to " +
+      "change the data from ascending to descending order. The text box can be used to jump to a specific song number. Click on a song for more information about it."
     }
   }
 }

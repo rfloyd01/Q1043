@@ -25,6 +25,10 @@
                 </div>  
             </button>
         </div>
+        <div class="table-description">
+            <h3>{{descriptionHeader}}:</h3>
+            <p>{{descriptionBody}}</p>
+        </div>
         <div id="item-list" class="content-block data-list" style="flex-grow: 1;" (scroll)="listScrollEventHandler($event)">
             <app-list-item *ngFor="let song of songs; index as i" [backgroundColorValue]="i % 2" [listValue]="listStart - i * flip" [song]="song" [displayType]="currentDataType" (clickEvent)="listItemSelected($event)"></app-list-item>
         </div>
