@@ -66,4 +66,11 @@ export class BackendServiceService {
     if (direction) dir = direction;
     return this.http.get<any>(this.backendUrl + '/songs/multiple?firstPage=' + firstPageNumber + '&pageSize=' + pageSize + '&numberOfPages=' + numberOfPages + '&sort=' + sortType + '&direction=' + dir );
   }
+
+  getPaginatedAlbumsByRank(pageNumber:number, pageSize:number, direction?:string):Observable<any> {
+    //unlike songs, we only score albums in one way (for now).
+    let dir:string = "asc"; //default to ascending order
+    if (direction) dir = direction;
+    return this.http.get<any>(this.backendUrl + '/albums/byRank?pageNumber=' + pageNumber + '&pageSize=' + pageSize + '&direction=' + dir );
+  }
 }

@@ -115,9 +115,12 @@ export class MainPageComponent implements OnInit {
     this.changeDataTypeButtonColor(dataType);
     this.currentDataType = dataType;
 
+    //clear out any data currently in the data array
+    this.data = [];
+
     if (dataType == "album") {
       this.setDescription();
-      this.getAlbums();
+      this.getAlbums(0, this.pageSize * this.maximumPages, 'asc', 'down', 1);
     }
   }
 
@@ -281,15 +284,29 @@ export class MainPageComponent implements OnInit {
     })
   }
 
-  getAlbums() {
-    
+  getAlbums(pageNumber:number, pageSize:number, direction:string, scrollDirection:string, listStart:number) {
+    this.backendService.getPaginatedAlbumsByRank(pageNumber, pageSize, direction).subscribe(res => {
+      //this function gives us a Java page object, for now we really only want the 'content' portion of it.
+      let foundAlbums:Album[] = res['content'];
+      this.totalListSize = res['totalElements'];
+      this.listStart = listStart;
+
+      if (scrollDirection == "down") {
+        this.data.splice(0, this.pageSize); //slice a page worth of items from the front of the array
+        this.data = this.data.concat(foundAlbums); //add the new items to the end of the array
+      }
+      else {
+        this.data.splice(this.data.length - this.pageSize); //slice a page worth of items from the end of the array
+        this.data = foundAlbums.concat(this.data);
+      }      
+    });
   }
 
   listScrollEventHandler(event:Event) {
     if (this.scrollEventComplete) {
       let itemList = event.target as Element;
 
-      console.log(itemList.scrollTop);
+      //console.log(itemList.scrollTop);
 
       //we want to set off the next paginated data request when we get close to the
       //bottom of the list so that scrolling seems seemless. To do this we need to
@@ -308,14 +325,19 @@ export class MainPageComponent implements OnInit {
           let scrollDirection:string = (this.currentRankingType == "averageScore") ? this.averageRankingsDirection : this.overallRankingsDirection;
 
           //increment the current pagination page and make call to the back end for the next appropriate page
-          this.backendService.getPaginatedSongsByRank((this.pageNumber++) + this.maximumPages, this.pageSize, this.currentRankingType, scrollDirection).subscribe(res => {
-            //this function gives us a Java page object, for now we really only want the 'content' portion of it.
-            let foundSongs:Song[] = res['content'];
-            this.listStart -= this.pageSize * this.flip;
-            this.data.splice(0, this.pageSize); //slice a page worth of items from the front of the array
-            this.data = this.data.concat(foundSongs); //add the new items to the end of the array
-            
-          });
+          if (this.currentDataType == 'song') {
+            this.backendService.getPaginatedSongsByRank((this.pageNumber++) + this.maximumPages, this.pageSize, this.currentRankingType, scrollDirection).subscribe(res => {
+              //this function gives us a Java page object, for now we really only want the 'content' portion of it.
+              let foundSongs:Song[] = res['content'];
+              this.listStart -= this.pageSize * this.flip;
+              this.data.splice(0, this.pageSize); //slice a page worth of items from the front of the array
+              this.data = this.data.concat(foundSongs); //add the new items to the end of the array
+              
+            });
+          }
+          else if (this.currentDataType == 'album') {
+            this.getAlbums((this.pageNumber++) + this.maximumPages, this.pageSize, this.overallRankingsDirection, 'down', this.listStart - this.pageSize * this.flip);
+          }
 
           this.scrollEventComplete = true;
         }
@@ -327,13 +349,18 @@ export class MainPageComponent implements OnInit {
           let scrollDirection:string = (this.currentRankingType == "averageScore") ? this.averageRankingsDirection : this.overallRankingsDirection;
 
           //increment the current pagination page and make call to the back end for next data set
-          this.backendService.getPaginatedSongsByRank(--this.pageNumber, this.pageSize, this.currentRankingType, scrollDirection).subscribe(res => {
-            //this function gives us a Java page object, for now we really only want the 'content' portion of it.
-            let foundSongs:Song[] = res['content'];
-            this.data.splice(this.data.length - this.pageSize); //slice a page worth of items from the end of the array
-            this.listStart += this.pageSize * this.flip;
-            this.data = foundSongs.concat(this.data);
-          });
+          if (this.currentDataType == 'song') {
+            this.backendService.getPaginatedSongsByRank(--this.pageNumber, this.pageSize, this.currentRankingType, scrollDirection).subscribe(res => {
+              //this function gives us a Java page object, for now we really only want the 'content' portion of it.
+              let foundSongs:Song[] = res['content'];
+              this.data.splice(this.data.length - this.pageSize); //slice a page worth of items from the end of the array
+              this.listStart += this.pageSize * this.flip;
+              this.data = foundSongs.concat(this.data);
+            });
+          }
+          else if (this.currentDataType == 'album') {
+            this.getAlbums(--this.pageNumber, this.pageSize, this.overallRankingsDirection, 'up', this.listStart + this.pageSize * this.flip);
+          }
 
           this.scrollEventComplete = true;
         }

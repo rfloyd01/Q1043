@@ -1,11 +1,16 @@
 package com.projectfloyd.Q1043.controllers;
 
 import com.projectfloyd.Q1043.models.Album;
+import com.projectfloyd.Q1043.models.Song;
 import com.projectfloyd.Q1043.services.AlbumService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/albums")
@@ -41,6 +46,13 @@ public class AlbumController {
         else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+    }
+
+    @GetMapping(value = "/byRank", params = {"pageNumber", "pageSize", "direction"})
+    public ResponseEntity<Page<Album>> getPaginatedAlbumsByRank(@RequestParam int pageNumber, @RequestParam int pageSize, @RequestParam String direction) {
+        Page<Album> albums = albumService.getPaginatedAlbumsByRank(pageNumber, pageSize, direction);
+        if (albums != null) return ResponseEntity.status(200).body(albums);
+        else return ResponseEntity.status(400).build();
     }
 
     @PostMapping("/createScore")

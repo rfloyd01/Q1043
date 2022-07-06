@@ -6,9 +6,14 @@ import com.projectfloyd.Q1043.models.Song;
 import com.projectfloyd.Q1043.repo.AlbumDAO;
 import com.projectfloyd.Q1043.repo.SongDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
 
 @Service
@@ -145,7 +150,9 @@ public class AlbumService {
         //ultimate editions for albums out there with like 100 songs which were skewing this multiplier.
 
         //First get all of the albums from the database:
-        ArrayList<Album> allAlbums = new ArrayList<>(albumDAO.findAll());
+        ArrayList<Album> allAlbums = new ArrayList<>();
+        Iterator<Album> it = albumDAO.findAll().iterator();
+        while (it.hasNext()) allAlbums.add(it.next());
 
         //Then iterate through them one by one
         for (Album album : allAlbums) {
@@ -174,5 +181,18 @@ public class AlbumService {
             albumDAO.save(album);
         }
 
+    }
+
+    public Page<Album> getPaginatedAlbumsByRank(int pageNumber, int pageSize, String direction) {
+        if (pageNumber < 0 || pageSize < 1) return null; //make sure the page request is valid before getting the page
+
+        //First get the sort direction, default to ascending
+        Sort.Direction dir = direction.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(dir, "albumScore"));
+        Page<Album> page = albumDAO.findAll(pageable);
+
+        //once we have the page, go through all of the albums and clean up the necessary variables for the JSON response.
+        for (Album album : page.getContent()) cleanDataForJSONResponse(album);
+        return page;
     }
 }
