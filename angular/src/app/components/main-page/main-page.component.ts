@@ -65,7 +65,7 @@ export class MainPageComponent implements OnInit {
     })
 
     this.currentlySelectedListItem = null; //start off with no selection
-    this.setDescriptionBody();
+    this.setDescription();
   }
 
   buttonClicked(value:string) {
@@ -115,11 +115,13 @@ export class MainPageComponent implements OnInit {
   }
 
   setDataType(dataType:string) {
+    this.changeDataTypeButtonColor(dataType);
     this.currentDataType = dataType;
 
-    //JUST WHILE TESTING: The below two lines should force the list to re-render.
-    //Add an empty song and then delete it.
-    //this.addTestSongs();
+    if (dataType == "album") {
+      this.setDescription();
+      this.getAlbums();
+    }
   }
 
   jumpTo() {
@@ -199,6 +201,7 @@ export class MainPageComponent implements OnInit {
   }
 
   getSongsByOverallRankings() {
+    this.changeOrderingButtonColor("overallScore"); //update button colors
     if (this.currentRankingType == "overallScore") {
       //since we're already looking at the overall score, clicking this button will change the direction of the ordering
       //as well as flipping the appropriate arrow.
@@ -240,6 +243,7 @@ export class MainPageComponent implements OnInit {
   }
 
   getSongsByAverageRankings() {
+    this.changeOrderingButtonColor("averageScore"); //update button colors
     if (this.currentRankingType == "averageScore") {
       //since we're already looking at the average score, clicking this button will change the direction of the ordering
       //as well as flipping the appropriate arrow.
@@ -279,6 +283,10 @@ export class MainPageComponent implements OnInit {
       //update the total number of list elements
       this.totalListSize = res['totalElements'];
     })
+  }
+
+  getAlbums() {
+    //TODO: Fill out this function
   }
 
   listScrollEventHandler(event:Event) {
@@ -337,8 +345,9 @@ export class MainPageComponent implements OnInit {
     }
   }
 
-  setDescriptionBody() {
+  setDescription() {
     if (this.currentDataType == "song") {
+      this.descriptionHeader = "Top Songs"
       this.descriptionBody = "This list combines all of the data from the individual years into a single place, all in all there are just under " +
       "2000 songs that appear on the lists over the various years. This combined list can be ordered in two different ways, by 'Average Score' and " +
       "by 'Overall Score'. The average score for a song is determined by taking the average rank of a song in every year that it made the list. The " +
@@ -346,5 +355,55 @@ export class MainPageComponent implements OnInit {
       "rank is an attempt to reward songs that have been on the list more times. The buttons on the left can be used to change between data set and to " +
       "change the data from ascending to descending order. The text box can be used to jump to a specific song number. Click on a song for more information about it."
     }
+    else if (this.currentDataType == "album") {
+      this.descriptionHeader = "Top Albums";
+      this.descriptionBody = "This list shows all of the different albums that have at least one of their songs appear on the combined song list. The ordering is " + 
+      "the combination of two factors. First, what ratio of their songs are on the list? If an album with only 4 songs on it has all of its songs make the list " + 
+      "then this should be considered better than an album with 15 songs where only 4 of them make the list. Second, what is the average rank of list songs on the album? " +
+      "If there are two different albums that have 50% of their songs on the list, but the average rank of list songs on the first album is 100 while the second " +
+      "album is 300, then the first album should be considered better."
+    }
+  }
+
+  changeOrderingButtonColor(clickedButton:string) {
+    if (clickedButton != this.currentRankingType) {
+      //we only change the button color if a different button is pressed
+      let buttonDiv = document.getElementById("data-ordering-buttons") as HTMLElement;
+
+      let overallButton = buttonDiv.childNodes[0] as HTMLElement;
+      let averageButton = buttonDiv.childNodes[1] as HTMLElement;
+
+      overallButton.classList.replace('pressed-button', 'nonpressed-button');
+      averageButton.classList.replace('pressed-button', 'nonpressed-button');
+
+      if (clickedButton == "overallScore") overallButton.classList.replace('nonpressed-button','pressed-button');
+      else averageButton.classList.replace('nonpressed-button','pressed-button');
+    }
+  }
+
+  changeDataTypeButtonColor(dataType:string) {
+    //we only change the button color if a different button is pressed
+    if (dataType != this.currentDataType) {
+      
+      //changing of the button colors happens by altering the classes for the buttons
+      let buttonDiv = document.getElementById("data-type-buttons") as HTMLElement;
+
+      let songButton = buttonDiv.childNodes[0] as HTMLElement;
+      let albumButton = buttonDiv.childNodes[1] as HTMLElement;
+      let artistButton = buttonDiv.childNodes[2] as HTMLElement;
+      let yearButton = buttonDiv.childNodes[3] as HTMLElement;
+
+      songButton.classList.replace('pressed-button', 'nonpressed-button');
+      albumButton.classList.replace('pressed-button', 'nonpressed-button');
+      artistButton.classList.replace('pressed-button', 'nonpressed-button');
+      yearButton.classList.replace('pressed-button', 'nonpressed-button');
+
+      
+      if (dataType == "song") songButton.classList.replace('nonpressed-button','pressed-button');
+      else if (dataType == "album") albumButton.classList.replace('nonpressed-button','pressed-button');
+      else if (dataType == "artist") artistButton.classList.replace('nonpressed-button','pressed-button');
+      else if (dataType == "year") yearButton.classList.replace('nonpressed-button','pressed-button');
+    }
+
   }
 }

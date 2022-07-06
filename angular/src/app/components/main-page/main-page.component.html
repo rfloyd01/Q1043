@@ -1,33 +1,35 @@
 <app-side-navbar [buttonList]="buttonList" (buttonClickEvent)="buttonClicked($event)"></app-side-navbar>
 <div class="main-body">
     <div class="body-flex" *ngIf="currentDisplay == 'Overall Data'">
-        <div class="content-block button-flex">
-            <button class="selection-button" (click)="setDataType('song')">Song Data</button>
-            <button class="selection-button" (click)="setDataType('album')">Album Data</button>
-            <button class="selection-button">Artist Data</button>
-            <button class="selection-button">Year Data</button>
+        <div class="table-description">
+            <h3>{{descriptionHeader}}:</h3>
+            <p>{{descriptionBody}}</p>
         </div>
-        <div class="content-block button-flex">
+        <div id="data-type-buttons" class="content-block button-flex">
+            <button class="selection-button pressed-button" (click)="setDataType('song')">Song Data</button>
+            <button class="selection-button nonpressed-button" (click)="setDataType('album')">Album Data</button>
+            <button class="selection-button nonpressed-button" (click)="setDataType('artist')">Artist Data</button>
+            <button class="selection-button nonpressed-button" (click)="setDataType('year')">Year Data</button>
+        </div>
+        <div class="content-block">
             <div style="display:flex; align-items: center;">
                 <input class="search-bar" placeholder="jump to number..." [(ngModel)]="jumpToNumber">
                 <button class="search-button" (click)="jumpTo()">Go</button>
             </div>
-            <button class="selection-button" style="float:left;" (click)="getSongsByOverallRankings()">
-                <div style="display:flex; width:100%">
-                    <p style="margin:0px; float:left">Overall Rankings</p>
-                    <img class="button-image" src="{{overallRankingsDirectionImage}}">
-                </div>   
-            </button>
-            <button class="selection-button" style="float:left;" (click)="getSongsByAverageRankings()">
-                <div style="display:flex; width:100%">
-                    <p style="margin:0px; float:left">Average Rankings</p>
-                    <img class="button-image" src="{{averageRankingsDirectionImage}}">
-                </div>  
-            </button>
-        </div>
-        <div class="table-description">
-            <h3>{{descriptionHeader}}:</h3>
-            <p>{{descriptionBody}}</p>
+            <div id="data-ordering-buttons" class="content-block button-flex">
+                <button class="selection-button pressed-button" style="float:left;" (click)="getSongsByOverallRankings()">
+                    <div style="display:flex; width:100%">
+                        <p style="margin:0px; float:left">Overall Rankings</p>
+                        <img class="button-image" src="{{overallRankingsDirectionImage}}">
+                    </div>   
+                </button>
+                <button class="selection-button nonpressed-button" style="float:left;" (click)="getSongsByAverageRankings()">
+                    <div style="display:flex; width:100%">
+                        <p style="margin:0px; float:left">Average Rankings</p>
+                        <img class="button-image" src="{{averageRankingsDirectionImage}}">
+                    </div>  
+                </button>
+            </div>
         </div>
         <div id="item-list" class="content-block data-list" style="flex-grow: 1;" (scroll)="listScrollEventHandler($event)">
             <app-list-item *ngFor="let song of songs; index as i" [backgroundColorValue]="i % 2" [listValue]="listStart - i * flip" [song]="song" [displayType]="currentDataType" (clickEvent)="listItemSelected($event)"></app-list-item>

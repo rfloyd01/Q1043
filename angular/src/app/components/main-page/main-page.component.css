@@ -29,7 +29,7 @@
 }
 
 .selection-button {
-    background-color: darkgoldenrod;
+    
     /*width: 125px;*/
     height: 33px;
     margin: 10px;
@@ -38,6 +38,14 @@
 .selection-button:hover {
     background-color: gold;
     cursor: pointer;
+}
+
+.pressed-button {
+    background-color: lightgoldenrodyellow;
+}
+
+.nonpressed-button {
+    background-color: darkgoldenrod;
 }
 
 .data-list {
