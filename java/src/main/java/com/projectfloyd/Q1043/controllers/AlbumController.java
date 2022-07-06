@@ -42,4 +42,9 @@ public class AlbumController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+
+    @PostMapping("/createScore")
+    public void createAlbumScores() {
+        albumService.generateAlbumScores();
+    }
 }

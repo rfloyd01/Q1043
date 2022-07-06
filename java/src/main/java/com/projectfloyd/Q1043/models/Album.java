@@ -20,6 +20,7 @@ public class Album {
     private int totalTracks;
     private String spotifyURI;
     private String albumArtworkURL;
+    private double albumScore;
 
     @ManyToOne
     //@JsonBackReference
@@ -33,13 +34,17 @@ public class Album {
     public Album() {
     }
 
-    public Album(int id, String title, int releaseYear, int totalTracks, String spotifyURI, String albumArtworkURL, Artist artist, List<Song> songs) {
+    public Album(int id, String title, int releaseYear, int totalTracks, String spotifyURI, String albumArtworkURL, Double albumScore, Artist artist, List<Song> songs) {
         this.id = id;
         this.title = title;
         this.releaseYear = releaseYear;
         this.totalTracks = totalTracks;
         this.spotifyURI = spotifyURI;
         this.albumArtworkURL = albumArtworkURL;
+
+        if (albumScore != null) this.albumScore = albumScore;
+        else this.albumScore = 0.0;
+
         this.artist = artist;
         this.songs = songs;
     }
@@ -93,6 +98,13 @@ public class Album {
         this.albumArtworkURL = albumArtworkURL;
     }
 
+    public double getAlbumScore() { return albumScore; }
+
+    public void setAlbumScore(Double albumScore) {
+        if (albumScore == null) this.albumScore = 0.0;
+        else this.albumScore = albumScore;
+    }
+
     public Artist getArtist() {
         return artist;
     }
@@ -115,12 +127,12 @@ public class Album {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Album album = (Album) o;
-        return id == album.id && releaseYear == album.releaseYear && totalTracks == album.totalTracks && Objects.equals(title, album.title) && Objects.equals(spotifyURI, album.spotifyURI) && Objects.equals(albumArtworkURL, album.albumArtworkURL) && Objects.equals(artist, album.artist) && Objects.equals(songs, album.songs);
+        return id == album.id && releaseYear == album.releaseYear && totalTracks == album.totalTracks && Objects.equals(title, album.title) && Objects.equals(spotifyURI, album.spotifyURI) && Objects.equals(albumScore, album.albumScore) && Objects.equals(albumArtworkURL, album.albumArtworkURL) && Objects.equals(artist, album.artist) && Objects.equals(songs, album.songs);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, releaseYear, totalTracks, spotifyURI, albumArtworkURL, artist, songs);
+        return Objects.hash(id, title, releaseYear, totalTracks, spotifyURI, albumArtworkURL, albumScore, artist, songs);
     }
 
     //Use the toStringWithoutAlbums() method from the Artist class to avoid an infinite recursion while printing
@@ -133,6 +145,7 @@ public class Album {
                 ", totalTracks=" + totalTracks +
                 ", spotifyURI='" + spotifyURI + '\'' +
                 ", albumArtworkURL='" + albumArtworkURL + '\'' +
+                ", albumScore=" + albumScore +
                 ", artist=" + artist.toStringWithoutAlbums() +
                 ", songs=" + songs +
                 '}';
@@ -147,6 +160,7 @@ public class Album {
                 ", totalTracks=" + totalTracks +
                 ", spotifyURI='" + spotifyURI + '\'' +
                 ", albumArtworkURL='" + albumArtworkURL + '\'' +
+                ", albumScore=" + albumScore +
                 ", artist=" + artist.toStringWithoutAlbums() +
                 '}';
     }
