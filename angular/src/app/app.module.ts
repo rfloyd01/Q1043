@@ -16,6 +16,7 @@ import { SideNavbarComponent } from './components/side-navbar/side-navbar.compon
 import { ListItemComponent } from './components/list-item/list-item.component';
 import { ChartTestComponent } from './components/chart-test/chart-test.component';
 import { NgChartsModule } from 'ng2-charts';
+import { AlbumDisplayComponent } from './components/album-display/album-display.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { NgChartsModule } from 'ng2-charts';
     HeaderComponent,
     SideNavbarComponent,
     ListItemComponent,
-    ChartTestComponent
+    ChartTestComponent,
+    AlbumDisplayComponent
   ],
   imports: [
     BrowserModule,

@@ -10,9 +10,11 @@ export class Album {
     albumArtworkURL!:string;
     artist!:Artist;
     songs!:Song[];
+    albumScore!:number;
+    notes!:string;
 
     constructor(id?:number, title?:string, releaseYear?:number, totalTracks?:number, spotifyURI?:string, albumArtworkURL?:string,
-        artist?:Artist, songs?:Song[]) {
+        artist?:Artist, songs?:Song[], albumScore?:number, notes?:string) {
         if (id) this.id = id;
         if (title) this.title = title;
         if (releaseYear) this.releaseYear = releaseYear;
@@ -21,6 +23,8 @@ export class Album {
         if (albumArtworkURL) this.albumArtworkURL = albumArtworkURL;
         if (artist) this.artist = artist;
         if (songs) this.songs = songs;
+        if (albumScore) this.albumScore = albumScore;
+        if (notes) this.notes = notes;
     }
 
 }

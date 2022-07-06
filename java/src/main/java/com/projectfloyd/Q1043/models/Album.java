@@ -21,6 +21,7 @@ public class Album {
     private String spotifyURI;
     private String albumArtworkURL;
     private double albumScore;
+    private String notes;
 
     @ManyToOne
     //@JsonBackReference
@@ -34,16 +35,15 @@ public class Album {
     public Album() {
     }
 
-    public Album(int id, String title, int releaseYear, int totalTracks, String spotifyURI, String albumArtworkURL, Double albumScore, Artist artist, List<Song> songs) {
+    public Album(int id, String title, int releaseYear, int totalTracks, String spotifyURI, String albumArtworkURL, double albumScore, Artist artist, String notes, List<Song> songs) {
         this.id = id;
         this.title = title;
         this.releaseYear = releaseYear;
         this.totalTracks = totalTracks;
         this.spotifyURI = spotifyURI;
         this.albumArtworkURL = albumArtworkURL;
-
-        if (albumScore != null) this.albumScore = albumScore;
-        else this.albumScore = 0.0;
+        this.notes = notes;
+        this.albumScore = albumScore;
 
         this.artist = artist;
         this.songs = songs;
@@ -100,13 +100,18 @@ public class Album {
 
     public double getAlbumScore() { return albumScore; }
 
-    public void setAlbumScore(Double albumScore) {
-        if (albumScore == null) this.albumScore = 0.0;
-        else this.albumScore = albumScore;
-    }
+    public void setAlbumScore(double albumScore) { this.albumScore = albumScore; }
 
     public Artist getArtist() {
         return artist;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public void setArtist(Artist artist) {
@@ -127,12 +132,12 @@ public class Album {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Album album = (Album) o;
-        return id == album.id && releaseYear == album.releaseYear && totalTracks == album.totalTracks && Objects.equals(title, album.title) && Objects.equals(spotifyURI, album.spotifyURI) && Objects.equals(albumScore, album.albumScore) && Objects.equals(albumArtworkURL, album.albumArtworkURL) && Objects.equals(artist, album.artist) && Objects.equals(songs, album.songs);
+        return id == album.id && releaseYear == album.releaseYear && totalTracks == album.totalTracks && Objects.equals(title, album.title) && Objects.equals(spotifyURI, album.spotifyURI) && Objects.equals(albumScore, album.albumScore) && Objects.equals(albumArtworkURL, album.albumArtworkURL) && Objects.equals(notes, album.notes) && Objects.equals(artist, album.artist) && Objects.equals(songs, album.songs);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, releaseYear, totalTracks, spotifyURI, albumArtworkURL, albumScore, artist, songs);
+        return Objects.hash(id, title, releaseYear, totalTracks, spotifyURI, albumArtworkURL, albumScore, notes, artist, songs);
     }
 
     //Use the toStringWithoutAlbums() method from the Artist class to avoid an infinite recursion while printing
@@ -148,6 +153,7 @@ public class Album {
                 ", albumScore=" + albumScore +
                 ", artist=" + artist.toStringWithoutAlbums() +
                 ", songs=" + songs +
+                ", notes='" + notes + '\'' +
                 '}';
     }
 
@@ -162,6 +168,7 @@ public class Album {
                 ", albumArtworkURL='" + albumArtworkURL + '\'' +
                 ", albumScore=" + albumScore +
                 ", artist=" + artist.toStringWithoutAlbums() +
+                ", notes='" + notes + '\'' +
                 '}';
     }
 }

@@ -17,16 +17,19 @@ export class ListItemComponent implements OnInit {
     this.content = this.listValue + ". ";
     this.currentBackgroundColorValue = this.backgroundColorValue;
 
-    if (this.displayType == "song") this.content += this.song.title;
-    else if (this.displayType == "artist") this.content += this.song.artist;
-    else if (this.displayType == "album") this.content += this.song.album.title;
-    else this.content += this.song.album.releaseYear.toString();
+    if (this.dataType == "song" || this.dataType == "album") this.content += this.data['title'];
+    else if (this.dataType == "artist") this.content += this.data['name'];
+    else {
+      //year data will be sent via the Album object
+      let releaseYear:number = this.data['releaseYear'];
+      this.content += releaseYear.toString();
+    }
   }
 
   @Input() listValue:number = 0;
   @Input() backgroundColorValue:number = 0;
-  @Input() song!:Song;
-  @Input() displayType:string = "";
+  @Input() data!:any;
+  @Input() dataType:string = "";
   @Output() clickEvent = new EventEmitter<ListItemComponent>();
 
   currentlySelected:boolean = false;

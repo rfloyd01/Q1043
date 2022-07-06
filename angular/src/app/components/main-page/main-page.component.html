@@ -32,11 +32,12 @@
             </div>
         </div>
         <div id="item-list" class="content-block data-list" style="flex-grow: 1;" (scroll)="listScrollEventHandler($event)">
-            <app-list-item *ngFor="let song of songs; index as i" [backgroundColorValue]="i % 2" [listValue]="listStart - i * flip" [song]="song" [displayType]="currentDataType" (clickEvent)="listItemSelected($event)"></app-list-item>
+            <app-list-item *ngFor="let datum of data; index as i" [backgroundColorValue]="i % 2" [listValue]="listStart - i * flip" [data]="datum" [dataType]="currentDataType" (clickEvent)="listItemSelected($event)"></app-list-item>
         </div>
     </div>
     <div class="body-flex" *ngIf="currentDisplay == 'Overall Data'">
-        <app-song-display class="content-block" *ngIf="currentlySelectedListItem != null" [song]="currentlySelectedListItem.song"></app-song-display>
+        <app-song-display class="content-block" *ngIf="currentlySelectedListItem != null && currentDataType == 'song'" [song]="currentlySelectedListItem.data"></app-song-display>
+        <app-album-display class="content-block" *ngIf="currentlySelectedListItem != null && currentDataType == 'album'" [album]="currentlySelectedListItem.data"></app-album-display>
         <div class="flex-item">
             <div style="display: block;">
             <canvas baseChart width="800" height="300"

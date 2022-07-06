@@ -1,0 +1,12 @@
+<div class="album-display">
+    <div class="album-information">
+        <h2><u>{{album.title}}</u></h2>
+        <h4>Artist: {{album.artist.name}}</h4>
+        <h4>Released: {{album.releaseYear}}</h4>
+        <a href="{{albumLink}}" target="_blank">Listen on Spotify</a>
+        <br><br>
+        <h4>Notes:</h4>
+        <p style="margin:0px;">{{album.notes}}</p>
+    </div>
+    <img class="album-artwork" [src]="albumArtworkSource" (error)="notLoaded()">
+</div>

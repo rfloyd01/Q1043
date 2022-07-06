@@ -138,7 +138,8 @@ public class AlbumService {
         //has 5 songs but the other has 15, I'd be a little more impressed by the album with 15. The actual scoring for
         //this part of the equation is simpler than the first part. For starters, anything that's labeled as a single
         //gets a 10x penalty to the score. Singles usually only have great songs but on them to begin with, and their
-        //low song count of 2 makes it much easier for them to reach the 100% goal. Outside of this, another exponential
+        //low song count of 2 makes it much easier for them to reach the 100% goal. Likewise, things marked as EPs will
+        //get a 5x multiplier penalty. Outside of this, another exponential
         //function is used, although it doesn't carry nearly as much weight as the first part of the equation. Anything
         //The equation is 2.25 * e ^ (-0.081 * numberOfSongs). I had to put a cap at 30 tracks because there are some
         //ultimate editions for albums out there with like 100 songs which were skewing this multiplier.
@@ -159,6 +160,7 @@ public class AlbumService {
             //Lastly calculate the total songs multiplier
             double totalSongMultiplier = 0.0;
             if (album.getTitle().contains("(single)")) totalSongMultiplier = 10.0;
+            else if (album.getTitle().contains("(ep)")) totalSongMultiplier = 5.0;
             else {
                 int totalSongs = album.getTotalTracks();
 

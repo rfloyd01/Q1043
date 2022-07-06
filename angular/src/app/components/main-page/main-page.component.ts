@@ -47,17 +47,17 @@ export class MainPageComponent implements OnInit {
   currentRankingType:string = "overallScore";
 
   //testSongs:Song[] = [];
-  songs:Song[] = [];
+  data:any[] = [];
   listStart:number = 1;
   flip:number = -1;
 
   ngOnInit(): void {
-    //when initially loading data, we grab a few pages at the same time (denoted by the maximumPages variable)
+    //when initially loading data, we grab a few pages at the same time for song data (denoted by the maximumPages variable)
     this.backendService.getPaginatedSongsByRank(this.pageNumber, this.maximumPages * this.pageSize, "overallScore").subscribe(res => {
       //this function gives us a Java page object, for now we really only want the 'content' portion of it.
       let foundSongs:Song[] = res['content'];
       for (let song of foundSongs) {
-        this.songs.push(song);
+        this.data.push(song);
       }
 
       this.totalListSize = res['totalElements'];
@@ -84,34 +84,31 @@ export class MainPageComponent implements OnInit {
     //ranked ones, we iterate over the ranking data and invert the values
     //(i.e. song 1 gets a value of 1043 and song 1043 gets a value of 1) while
     //unranked years remain at zero
-    let rankingCopy = this.currentlySelectedListItem.song.rankings;
-    for (let i:number = 0; i < rankingCopy.length; i++) {
-      if (rankingCopy[i] > 0) rankingCopy[i] = 1044 - rankingCopy[i];
-    }
+    if (this.currentDataType == 'song') {
+      let rankingCopy:number[] = this.currentlySelectedListItem.data['rankings'];
+      for (let i:number = 0; i < rankingCopy.length; i++) {
+        if (rankingCopy[i] > 0) rankingCopy[i] = 1044 - rankingCopy[i];
+      }
 
-    this.lineChartData = {
-      datasets: [
-        {
-          data: rankingCopy,
-          label: 'Inverse Rank by Year',
-          backgroundColor: 'rgba(148,159,177,0.2)',
-          borderColor: 'rgba(148,159,177,1)',
-          pointBackgroundColor: 'rgba(148,159,177,1)',
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: 'rgba(148,159,177,0.8)',
-          fill: 'origin'
-        }
-      ],
-      labels: [ '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010',
-                '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020',
-                '2021']
+      this.lineChartData = {
+        datasets: [
+          {
+            data: rankingCopy,
+            label: 'Inverse Rank by Year',
+            backgroundColor: 'rgba(148,159,177,0.2)',
+            borderColor: 'rgba(148,159,177,1)',
+            pointBackgroundColor: 'rgba(148,159,177,1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(148,159,177,0.8)',
+            fill: 'origin'
+          }
+        ],
+        labels: [ '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010',
+                  '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020',
+                  '2021']
+      }
     }
-
-    //then update the data set for chart with ranking data from selected song
-    // let lineChartDataCopy = this.lineChartData;
-    // lineChartDataCopy.datasets[0].data = this.selectedSong.rankings;
-    // this.lineChartData = lineChartDataCopy;
   }
 
   setDataType(dataType:string) {
@@ -140,12 +137,12 @@ export class MainPageComponent implements OnInit {
     
     let scrollDirection:string = (this.currentRankingType == "averageScore") ? this.averageRankingsDirection : this.overallRankingsDirection;
     this.backendService.getMultiplePaginatedSongsByRank(firstPage, this.pageSize, this.maximumPages, this.currentRankingType, scrollDirection).subscribe(res => {
-      this.songs = []; //clear the current song list
+      this.data = []; //clear the current song list
       if (this.flip == -1) this.listStart = firstPage * this.pageSize - this.flip;
       else this.listStart = this.totalListSize - firstPage * this.pageSize;
       this.pageNumber = firstPage;
       for (let page of res) {
-        this.songs = this.songs.concat(page['content']);
+        this.data = this.data.concat(page['content']);
       }
 
       //after adding all songs to the list, we force the list viewer to scroll to the correct location
@@ -217,7 +214,7 @@ export class MainPageComponent implements OnInit {
     }
 
     //First, delete the current song array
-    this.songs = [];
+    this.data = [];
 
     //reset the pagination page number
     this.pageNumber = 0;
@@ -231,7 +228,7 @@ export class MainPageComponent implements OnInit {
       //this function gives us a Java page object, for now we really only want the 'content' portion of it.
       let foundSongs:Song[] = res['content'];
       for (let song of foundSongs) {
-        this.songs.push(song);
+        this.data.push(song);
       }
 
       //change the selected song
@@ -258,9 +255,8 @@ export class MainPageComponent implements OnInit {
       this.currentRankingType = "averageScore";
     }
 
-
     //First, delete the current song array
-    this.songs = [];
+    this.data = [];
 
     //reset the pagination page number
     this.pageNumber = 0;
@@ -274,7 +270,7 @@ export class MainPageComponent implements OnInit {
       //this function gives us a Java page object, for now we really only want the 'content' portion of it.
       let foundSongs:Song[] = res['content'];
       for (let song of foundSongs) {
-        this.songs.push(song);
+        this.data.push(song);
       }
 
       //change the selected song
@@ -286,7 +282,7 @@ export class MainPageComponent implements OnInit {
   }
 
   getAlbums() {
-    //TODO: Fill out this function
+    
   }
 
   listScrollEventHandler(event:Event) {
@@ -316,8 +312,8 @@ export class MainPageComponent implements OnInit {
             //this function gives us a Java page object, for now we really only want the 'content' portion of it.
             let foundSongs:Song[] = res['content'];
             this.listStart -= this.pageSize * this.flip;
-            this.songs.splice(0, this.pageSize); //slice a page worth of items from the front of the array
-            this.songs = this.songs.concat(foundSongs); //add the new items to the end of the array
+            this.data.splice(0, this.pageSize); //slice a page worth of items from the front of the array
+            this.data = this.data.concat(foundSongs); //add the new items to the end of the array
             
           });
 
@@ -334,9 +330,9 @@ export class MainPageComponent implements OnInit {
           this.backendService.getPaginatedSongsByRank(--this.pageNumber, this.pageSize, this.currentRankingType, scrollDirection).subscribe(res => {
             //this function gives us a Java page object, for now we really only want the 'content' portion of it.
             let foundSongs:Song[] = res['content'];
-            this.songs.splice(this.songs.length - this.pageSize); //slice a page worth of items from the end of the array
+            this.data.splice(this.data.length - this.pageSize); //slice a page worth of items from the end of the array
             this.listStart += this.pageSize * this.flip;
-            this.songs = foundSongs.concat(this.songs);
+            this.data = foundSongs.concat(this.data);
           });
 
           this.scrollEventComplete = true;
