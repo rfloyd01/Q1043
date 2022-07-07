@@ -79,6 +79,6 @@ export class BackendServiceService {
     //on the front end (actually for all I know it's already built-in) so I decided to just return an 'any' object.
     let dir:string = "asc"; //default to ascending order
     if (direction) dir = direction;
-    return this.http.get<any>(this.backendUrl + '/albums/multiple?firstPage=' + firstPageNumber + '&pageSize=' + pageSize + '&numberOfPages=' + numberOfPages + '&direction=' + dir );
+    return this.http.get<any>(this.backendUrl + '/albums/byRank/multiple?firstPage=' + firstPageNumber + '&pageSize=' + pageSize + '&numberOfPages=' + numberOfPages + '&direction=' + dir );
   }
 }

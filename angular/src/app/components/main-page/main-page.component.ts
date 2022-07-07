@@ -124,6 +124,10 @@ export class MainPageComponent implements OnInit {
     this.setDescription();
     this.currentDataType = dataType;
 
+    //reset the jump to input box
+    let jumpToInput = document.getElementById('jump-to') as HTMLInputElement;
+    jumpToInput.value = "";
+
     //clear out any data currently in the data array and set current selection to null
     this.data = [];
     this.currentlySelectedListItem = null;
@@ -151,34 +155,43 @@ export class MainPageComponent implements OnInit {
     //This function give a way to quickly maneuver to a far away part of the list without scrolling.
     //It will get the appropriate pagination pages and put the jumpTo number in the middle of the
     //list.
-    let orderedJumpTo = (this.flip == -1) ? this.jumpToNumber : (this.totalListSize - this.jumpToNumber + 1);
-    let requiredPage:number = Math.floor((orderedJumpTo - 1) / this.pageSize);
 
+    //First make sure that the jump to number is valid
+    if (this.jumpToNumber < 1) this.jumpToNumber = 1;
+    else if (this.jumpToNumber > this.totalListSize) this.jumpToNumber = this.totalListSize;
+
+    let orderedJumpTo = (this.flip == -1) ? this.jumpToNumber : (this.totalListSize - this.jumpToNumber + 1);
+    let requiredPage:number = Math.floor((orderedJumpTo - 1) / this.pageSize); //the page that our data item is on
+
+    //Define the first page of the pages we'll be grabbing. The first page will be a number of pages before the required page.
     //When the maximum page number is even the middle will be counted as the first page PAST the center. So if there
-    //were a maximum of 4 pages then the middle would be page 3 --> ((1. not middle), (2. not middle), (3. middle page), (4. not middle))
-    let firstPage:number = (requiredPage - (this.maximumPages / 2) < 0) ? 0 : requiredPage - (this.maximumPages / 2); 
+    //were a maximum of 4 pages then the middle would be page 3 --> ((1. not middle), (2. not middle), (3. middle page), (4. not middle)).
+    //We also need to make sure that the first page isn't less than 0, or less than a distance of this.maximumPages from the
+    //final page
+
+    //check for less than 0
+    let firstPage:number = (requiredPage - (this.maximumPages / 2) < 0) ? 0 : requiredPage - (this.maximumPages / 2);
+
+    //check for being too close to the final page
+    let finalPage:number = this.totalListSize / this.pageSize;
+    if (finalPage - this.maximumPages < firstPage) firstPage = finalPage - this.maximumPages;
 
     //this if statement executes if the maximum page number is odd
     if (this.maximumPages % 2 != 0) firstPage = (requiredPage - ((this.maximumPages - 1) / 2) < 0) ? 0 : requiredPage - ((this.maximumPages - 1) / 2);
+
+    //Set the appropriate start number for the list
+    if (this.flip == -1) this.listStart = firstPage * this.pageSize - this.flip;
+    else this.listStart = this.totalListSize - firstPage * this.pageSize;
     
-    //let scrollDirection:string = (this.currentRankingType == "averageScore") ? this.averageRankingsDirection : this.overallRankingsDirection;
-    this.backendService.getMultiplePaginatedSongsByRank(firstPage, this.pageSize, this.maximumPages, this.currentRankingType, this.rankingsDirections[this.rankingsValue]).subscribe(res => {
-      this.data = []; //clear the current song list
-      if (this.flip == -1) this.listStart = firstPage * this.pageSize - this.flip;
-      else this.listStart = this.totalListSize - firstPage * this.pageSize;
-      this.pageNumber = firstPage;
-      for (let page of res) {
-        this.data = this.data.concat(page['content']);
-      }
+    if (this.currentDataType == 'song') this.getSongs(firstPage, this.maximumPages, "", this.listStart);
+    else if (this.currentDataType == 'album') this.getAlbums(firstPage, this.maximumPages, "", this.listStart);
+    
+    //after adding all songs to the list, we force the list viewer to scroll to the correct location
+    let list = document.getElementById('item-list') as HTMLElement;
+    let listItem = list.firstChild as HTMLElement;
+    let listItemHeight = listItem.offsetHeight;
 
-      //after adding all songs to the list, we force the list viewer to scroll to the correct location
-      let list = document.getElementById('item-list') as HTMLElement;
-      let listItem = list.firstChild as HTMLElement;
-      let listItemHeight = listItem.offsetHeight;
-
-      list.scrollTo({top: (orderedJumpTo - (firstPage * this.pageSize + 1)) * listItemHeight});
-
-    })
+    list.scrollTo({top: (orderedJumpTo - (firstPage * this.pageSize + 1)) * listItemHeight});
   }
 
   //The below items are for rendering charts
@@ -224,6 +237,7 @@ export class MainPageComponent implements OnInit {
       this.backendService.getPaginatedSongsByRank(firstPageNumber, this.pageSize, this.currentRankingType, this.rankingsDirections[this.rankingsValue]).subscribe(res => {
         //this function gives us a Java page object, for now we really only want the 'content' portion of it.
         let foundSongs:Song[] = res['content'];
+        if (foundSongs.length == 0) return; //we've reached the final page so there's no need to update
         this.listStart = listStart;
 
         if (scrollDirection == "down") {
@@ -241,6 +255,8 @@ export class MainPageComponent implements OnInit {
       this.backendService.getMultiplePaginatedSongsByRank(firstPageNumber, this.pageSize, totalPages, this.currentRankingType, this.rankingsDirections[this.rankingsValue]).subscribe(res => {
         //We need to grab multiple pages which means that our current song list will need to be deleted.
         //and total list size reset (in case we switched data types).
+        if (res[0]['content'].length == 0) return; //we've reached the final page so there's no need to update
+
         this.data = [];
         this.totalListSize = res[0]['totalElements'];
 
@@ -253,7 +269,6 @@ export class MainPageComponent implements OnInit {
         }
       })
     }
-
   }
 
   getAlbums(firstPageNumber:number, totalPages:number, scrollDirection:string, listStart:number) {
@@ -272,7 +287,8 @@ export class MainPageComponent implements OnInit {
         else {
           this.data.splice(this.data.length - this.pageSize); //slice a page worth of items from the end of the array
           this.data = foundAlbums.concat(this.data);
-        }      
+        }
+        this.scrollEventComplete = true;
       });
     }
     else {
