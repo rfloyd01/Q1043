@@ -52,6 +52,38 @@ export class MainPageComponent implements OnInit {
   listStart:number = 1;
   flip:number = -1;
 
+  //Definitions for chart element
+  lineChartData!: ChartConfiguration['data'];
+  lineChartOptions: ChartConfiguration['options'] = {
+    elements: {
+      line: {
+        tension: 0.5
+      }
+    },
+    scales: {
+      //this empty structure is used as a placeholder for dynamic theming
+      x:{},
+      y:{
+        beginAtZero: true,
+        min: 0,
+        max: 1043
+      }
+    }
+  };
+
+  public lineChartType:ChartType = 'line';
+
+  @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
+
+  // events
+  public chartClicked({ event, active }: { event?: ChartEvent, active?: {}[] }): void {
+    console.log(event, active);
+  }
+
+  public chartHovered({ event, active }: { event?: ChartEvent, active?: {}[] }): void {
+    console.log(event, active);
+  }
+
   ngOnInit(): void {
     //when initially loading data, we grab a few pages at the same time for song data (denoted by the maximumPages variable)
     this.backendService.getPaginatedSongsByRank(this.pageNumber, this.maximumPages * this.pageSize, "overallScore").subscribe(res => {
@@ -91,11 +123,61 @@ export class MainPageComponent implements OnInit {
         if (rankingCopy[i] > 0) rankingCopy[i] = 1044 - rankingCopy[i];
       }
 
+      if (this.lineChartOptions) {
+        this.lineChartOptions.scales = {
+          x:{},
+          y:{
+            beginAtZero: true,
+            min: 0,
+            max: 1043
+          }
+        }
+      }
+
       this.lineChartData = {
         datasets: [
           {
             data: rankingCopy,
             label: 'Inverse Rank by Year',
+            backgroundColor: 'rgba(148,159,177,0.2)',
+            borderColor: 'rgba(148,159,177,1)',
+            pointBackgroundColor: 'rgba(148,159,177,1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(148,159,177,0.8)',
+            fill: 'origin'
+          }
+        ],
+        labels: [ '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010',
+                  '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020',
+                  '2021']
+      }
+    }
+    else if (this.currentDataType == 'album') {
+      let numberOfSongsByYear:number[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      for (let song of this.currentlySelectedListItem['data']['songs']) {
+        for (let i:number = 2001; i <= 2021; i++) {
+          if(song['rankings'][i - 2001]) numberOfSongsByYear[i - 2001]++
+        }
+      }
+
+
+      if (this.lineChartOptions) {
+        this.lineChartOptions.scales = {
+          x:{},
+          y:{
+            beginAtZero: true,
+            min: 0,
+            max: this.currentlySelectedListItem['data']['totalTracks']
+          }
+        }
+      }
+
+      this.lineChartData = {
+        datasets: [
+          {
+            data: numberOfSongsByYear,
+            label: 'Songs Ranked',
             backgroundColor: 'rgba(148,159,177,0.2)',
             borderColor: 'rgba(148,159,177,1)',
             pointBackgroundColor: 'rgba(148,159,177,1)',
@@ -192,39 +274,6 @@ export class MainPageComponent implements OnInit {
     let listItemHeight = listItem.offsetHeight;
 
     list.scrollTo({top: (orderedJumpTo - (firstPage * this.pageSize + 1)) * listItemHeight});
-  }
-
-  //The below items are for rendering charts
-  public lineChartData!: ChartConfiguration['data'];
-
-  public lineChartOptions: ChartConfiguration['options'] = {
-    elements: {
-      line: {
-        tension: 0.5
-      }
-    },
-    scales: {
-      //this empty structure is used as a placeholder for dynamic theming
-      x:{},
-      y:{
-        beginAtZero: true,
-        min: 0,
-        max: 1043
-      }
-    }
-  };
-
-  public lineChartType:ChartType = 'line';
-
-  @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
-
-  // events
-  public chartClicked({ event, active }: { event?: ChartEvent, active?: {}[] }): void {
-    console.log(event, active);
-  }
-
-  public chartHovered({ event, active }: { event?: ChartEvent, active?: {}[] }): void {
-    console.log(event, active);
   }
 
   getSongs(firstPageNumber:number, totalPages:number, scrollDirection:string, listStart:number) {
