@@ -14,6 +14,7 @@ export class CookieService {
     let c:string;
 
     for (let i:number = 0; i < caLen; i++) {
+      
       c = ca[i].replace(/^\s+/g, '');
       if (c.indexOf(cookieName) == 0) {
         return c.substring(cookieName.length, c.length);

@@ -195,6 +195,7 @@ public class AlbumService {
             //Lastly calculate the total songs multiplier
             double totalSongMultiplier = 0.0;
             if (album.getTitle().contains("(single)")) totalSongMultiplier = 10.0;
+            else if (album.getTitle().contains("(double ep)")) totalSongMultiplier = 2.5;
             else if (album.getTitle().contains("(ep)")) totalSongMultiplier = 5.0;
             else {
                 int totalSongs = album.getTotalTracks();
