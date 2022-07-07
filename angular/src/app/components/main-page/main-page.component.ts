@@ -114,14 +114,18 @@ export class MainPageComponent implements OnInit {
   setDataType(dataType:string) {
     this.changeDataTypeButtonColor(dataType);
     this.currentDataType = dataType;
+    this.setDescription();
 
-    //clear out any data currently in the data array
+    //clear out any data currently in the data array and set current selection to null
     this.data = [];
+    this.currentlySelectedListItem = null;
 
-    if (dataType == "album") {
-      this.setDescription();
-      this.getAlbums(0, this.pageSize * this.maximumPages, 'asc', 'down', 1);
+    if (dataType == "song")  {
+      this.currentRankingType = "averageScore"; //this will cause the overall rankings to load in the same direction as current
+      this.getSongsByOverallRankings();
     }
+    else if (dataType == "album")  this.getAlbums(0, this.pageSize * this.maximumPages, 'asc', 'down', 1);
+
   }
 
   jumpTo() {
@@ -157,15 +161,6 @@ export class MainPageComponent implements OnInit {
 
     })
   }
-
-  // addTestSongs() {
-  //   this.testSongs = [];
-  //   let stairwayRanks:number[] = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-  //   let rhapsodyRanks:number[] = [44,	16,	12,	19,	8,	16,	18,	13,	9,	12,	5,	3,	4,	8,	7,	10,	7,	2,	2,	2,	2]
-  //   this.testSongs.push(new Song(1, "Stairway to Heaven", "Led Zepplin", new Album(1, "Led Zeppelin IV", 1971, 8, "5EyIDBAqhnlkAHqvPRwdbX", "https://i.scdn.co/image/ab67616d0000b2734509204d0860cc0cc67e83dc", new Artist(1, "Led Zeppelin", []), []), "0RO9W1xJoUEpq5MEelddFb", 61, stairwayRanks, 1, 1, 1, 1, "Mighty"));
-  //   this.testSongs.push(new Song(2, "Bohemian Rhapsody", "Queen", new Album(2, "A Night at the Opera", 1975, 12, "7HVoV2lgVsmuiHsjbbUJB4", "https://i.scdn.co/image/ab67616d0000b2733025a441495664948b809537", new Artist(2, "Queen", []), []), "5eIDxmWYxRA0HJBYM9bIIS", 38, rhapsodyRanks, 2, 2, 2, 2, "Less Mighty"));
-    
-  // }
 
   //The below items are for rendering charts
   public lineChartData!: ChartConfiguration['data'];
