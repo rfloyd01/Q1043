@@ -149,20 +149,48 @@ public class AlbumService {
         //The equation is 2.25 * e ^ (-0.081 * numberOfSongs). I had to put a cap at 30 tracks because there are some
         //ultimate editions for albums out there with like 100 songs which were skewing this multiplier.
 
+        //UPDATE: I found that certain albums that had only a single song on them, albeit very good songs, we're being
+        //ranked disproportionately high. I changed the equation to a piecewise function that heavily penalizes
+        //albums with a song percentage between 0% and 15% and moderately penalizes albums from 15% to 30%. From this
+        //point on
+
+        //UPDATE 2: The overall average score needs some tweaks. I was looking at the album 'Let it Bleed' and saw that
+        //it was all the way back in 77th place which felt a little high. Taking a look at the overall song scores for
+        //the album we get [0.99, 4.45, 21.78, 29.55, 940.00] for an average of 199.35. It's pretty easy to see that
+        //the lone song at the end really skews the average higher than it should be. The album score in this case is
+        //47.42. If we were to hypothetically get rid of the bad song, it will make the ratio and total song multipliers
+        //go up, but it will bring the average score down as well. The average without the bad song is 14.19. The album
+        //score would go to (2.73 * e ^ (-4.54 * 4 / 9)) * 14.19 * (2.25 * e ^ (-.081 * 9)) = 5.59. This would take
+        //the album from 77th place all the way down to 11th place. It definitely isn't fair that adding a song makes
+        //your score get worse. To make sure that numbers always improve the score, and that lower numbers are better
+        //then higher numbers I'm going to use the same equation as for calculating resistance in a parallel electrical
+        //circuit. Basically, the combined song score for the album will be: 1 / (1/score_1 + 1/score_2 + ... 1/score_N).
+        //Since this method inherantly rewards for having more songs on the album I decided to get rid of the total song
+        //multiplier.
+
         //First get all of the albums from the database:
         ArrayList<Album> allAlbums = new ArrayList<>();
         Iterator<Album> it = albumDAO.findAll().iterator();
         while (it.hasNext()) allAlbums.add(it.next());
 
+        int counter = 0;
+
         //Then iterate through them one by one
         for (Album album : allAlbums) {
 
+            //if (counter++ > 10) break;
+
             double songRatio = ((double)album.getSongs().size()) / album.getTotalTracks();
-            double ratioMultiplier = 64 * Math.exp(-0.693 * 10.0 * songRatio); //calculate the ratio score
+            //double ratioMultiplier = 64 * Math.exp(-0.693 * 10.0 * songRatio); //calculate the ratio score
+            //Calculate the ratio multiplier based on the ratio of album songs on the list to total songs on the album
+            double ratioMultiplier = 0.0;
+            if (songRatio < 0.3) ratioMultiplier = 324.13 * Math.exp(-18.2 * songRatio);
+            else ratioMultiplier = 2.73 * Math.exp(-4.54 * songRatio);
+
             double averageOverallScore = 0.0;
 
-            //Then calculate the average overall score (this will get divided before being added to total
-            for (Song song : album.getSongs()) averageOverallScore += song.getOverallScore();
+            //Then calculate the average overall score
+            for (Song song : album.getSongs()) averageOverallScore += (1.0 / song.getOverallScore());
 
             //Lastly calculate the total songs multiplier
             double totalSongMultiplier = 0.0;
@@ -177,7 +205,8 @@ public class AlbumService {
             }
 
             //Set the album score and save the album
-            album.setAlbumScore((averageOverallScore / album.getSongs().size()) * ratioMultiplier * totalSongMultiplier);
+            //album.setAlbumScore((averageOverallScore / album.getSongs().size()) * ratioMultiplier * totalSongMultiplier);
+            album.setAlbumScore((10 / averageOverallScore) * ratioMultiplier);
             albumDAO.save(album);
         }
 
