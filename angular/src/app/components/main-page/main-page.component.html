@@ -6,10 +6,30 @@
             <p>{{descriptionBody}}</p>
         </div>
         <div id="data-type-buttons" class="content-block button-flex">
-            <button class="selection-button pressed-button" (click)="setDataType('song')">Song Data</button>
-            <button class="selection-button nonpressed-button" (click)="setDataType('album')">Album Data</button>
-            <button class="selection-button nonpressed-button" (click)="setDataType('artist')">Artist Data</button>
-            <button class="selection-button nonpressed-button" (click)="setDataType('year')">Year Data</button>
+            <button class="selection-button pressed-button" (click)="setDataType('song')">
+                <div style="display:flex; align-items: center; justify-content: space-between;">
+                    Song Data
+                    <img class="button-image" src="{{rankingsDirectionImages[rankingsValue]}}">
+                </div>
+            </button>
+            <button class="selection-button nonpressed-button" (click)="setDataType('album')">
+                <div style="display:flex; align-items: center; justify-content: space-between;">
+                    Album Data
+                    <img class="button-image" src="{{rankingsDirectionImages[rankingsValue]}}">
+                </div>
+            </button>
+            <button class="selection-button nonpressed-button" (click)="setDataType('artist')">
+                <div style="display:flex; align-items: center; justify-content: space-between;">
+                    Artist Data
+                    <img class="button-image" src="{{rankingsDirectionImages[rankingsValue]}}">
+                </div>
+            </button>
+            <button class="selection-button nonpressed-button" (click)="setDataType('year')">
+                <div style="display:flex; align-items: center; justify-content: space-between;">
+                    Year Data
+                    <img class="button-image" src="{{rankingsDirectionImages[rankingsValue]}}">
+                </div>
+            </button>
         </div>
         <div class="content-block">
             <div style="display:flex; align-items: center;">
@@ -17,18 +37,8 @@
                 <button class="search-button" (click)="jumpTo()">Go</button>
             </div>
             <div id="data-ordering-buttons" class="content-block button-flex">
-                <button class="selection-button pressed-button" style="float:left;" (click)="getSongsByOverallRankings()">
-                    <div style="display:flex; width:100%">
-                        <p style="margin:0px; float:left">Overall Rankings</p>
-                        <img class="button-image" src="{{overallRankingsDirectionImage}}">
-                    </div>   
-                </button>
-                <button class="selection-button nonpressed-button" style="float:left;" (click)="getSongsByAverageRankings()">
-                    <div style="display:flex; width:100%">
-                        <p style="margin:0px; float:left">Average Rankings</p>
-                        <img class="button-image" src="{{averageRankingsDirectionImage}}">
-                    </div>  
-                </button>
+                <button class="selection-button pressed-button" style="float:left;" (click)="setRankingType('overallScore')">Overall Rankings</button>
+                <button class="selection-button nonpressed-button" style="float:left;" (click)="setRankingType('averageScore')">Average Rankings</button>
             </div>
         </div>
         <div id="item-list" class="content-block data-list" style="flex-grow: 1;" (scroll)="listScrollEventHandler($event)">
