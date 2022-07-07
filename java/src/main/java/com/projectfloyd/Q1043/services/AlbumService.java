@@ -183,16 +183,20 @@ public class AlbumService {
 
     }
 
-    public Page<Album> getPaginatedAlbumsByRank(int pageNumber, int pageSize, String direction) {
+    public Page<Album> getPaginatedAlbumsByRank(int pageNumber, int pageSize, String sort, String direction) {
         if (pageNumber < 0 || pageSize < 1) return null; //make sure the page request is valid before getting the page
 
-        //First get the sort direction, default to ascending
-        Sort.Direction dir = direction.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(dir, "albumScore"));
-        Page<Album> page = albumDAO.findAll(pageable);
+        if (sort.equals("albumScore") || sort.equals("totalTracks")) {
+            //First get the sort direction, default to ascending
+            Sort.Direction dir = direction.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+            Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(dir, sort));
+            Page<Album> page = albumDAO.findAll(pageable);
 
-        //once we have the page, go through all of the albums and clean up the necessary variables for the JSON response.
-        for (Album album : page.getContent()) cleanDataForJSONResponse(album);
-        return page;
+            //once we have the page, go through all of the albums and clean up the necessary variables for the JSON response.
+            for (Album album : page.getContent()) cleanDataForJSONResponse(album);
+            return page;
+        }
+        else return null; //we can only sort by album score and total tracks
+
     }
 }

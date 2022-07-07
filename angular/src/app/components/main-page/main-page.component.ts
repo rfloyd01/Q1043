@@ -44,8 +44,8 @@ export class MainPageComponent implements OnInit {
   rankingsDirections:string[] = ["asc", "desc"];
   rankingsDirectionImages:string[] = ["assets/down_arrow.png", "assets/up_arrow.png"];
 
-  currentRankingType:string = "overallScore";
-  rankingTypes:string[] = ["overallScore", "averageScore", "mostSongs"];
+  currentRankingType:number = 0;
+  rankingTypes:string[] = ["overallScore", "averageScore", "albumScore", "totalTracks"];
 
   //testSongs:Song[] = [];
   data:any[] = [];
@@ -203,8 +203,9 @@ export class MainPageComponent implements OnInit {
     }
 
     this.changeDataTypeButtonColor(dataType);
-    this.setDescription();
     this.currentDataType = dataType;
+    this.setDescription();
+    
 
     //reset the jump to input box
     let jumpToInput = document.getElementById('jump-to') as HTMLInputElement;
@@ -219,11 +220,12 @@ export class MainPageComponent implements OnInit {
 
   }
 
-  setRankingType(rankingType:string) {
+  setRankingType(rankingType:number) {
     if (this.currentRankingType == rankingType) return; //no need to change anything
-
+    
     this.changeOrderingButtonColor(rankingType);
     this.currentRankingType = rankingType;
+    
 
     //When changing the ranking type we always jump back to the 
     //beginning of the list, so we need to reset the listStart variable.
@@ -283,7 +285,7 @@ export class MainPageComponent implements OnInit {
     if (totalPages == 1) {
       //this means we've triggered the infinite scroll event, which requires different logic for scrolling upwards
       //and downwards. The scrollDirection variable indicates which direction we need to grab data in.
-      this.backendService.getPaginatedSongsByRank(firstPageNumber, this.pageSize, this.currentRankingType, this.rankingsDirections[this.rankingsValue]).subscribe(res => {
+      this.backendService.getPaginatedSongsByRank(firstPageNumber, this.pageSize, this.rankingTypes[this.currentRankingType], this.rankingsDirections[this.rankingsValue]).subscribe(res => {
         //this function gives us a Java page object, for now we really only want the 'content' portion of it.
         let foundSongs:Song[] = res['content'];
         if (foundSongs.length == 0) return; //we've reached the final page so there's no need to update
@@ -301,7 +303,7 @@ export class MainPageComponent implements OnInit {
       });
     }
     else {
-      this.backendService.getMultiplePaginatedSongsByRank(firstPageNumber, this.pageSize, totalPages, this.currentRankingType, this.rankingsDirections[this.rankingsValue]).subscribe(res => {
+      this.backendService.getMultiplePaginatedSongsByRank(firstPageNumber, this.pageSize, totalPages, this.rankingTypes[this.currentRankingType], this.rankingsDirections[this.rankingsValue]).subscribe(res => {
         //We need to grab multiple pages which means that our current song list will need to be deleted.
         //and total list size reset (in case we switched data types).
         if (res[0]['content'].length == 0) return; //we've reached the final page so there's no need to update
@@ -324,7 +326,7 @@ export class MainPageComponent implements OnInit {
     //Same basic idea as the getSongs() function above.
     if (totalPages == 1) {
       //This get's called when we've triggered the infinite scroll event of the list
-      this.backendService.getPaginatedAlbumsByRank(firstPageNumber, this.pageSize, this.rankingsDirections[this.rankingsValue]).subscribe(res => {
+      this.backendService.getPaginatedAlbumsByRank(firstPageNumber, this.pageSize, this.rankingTypes[this.currentRankingType], this.rankingsDirections[this.rankingsValue]).subscribe(res => {
         let foundAlbums:Album[] = res['content']; //this function gives us a Java 'Page' object
         this.totalListSize = res['totalElements'];
         this.listStart = listStart;
@@ -341,7 +343,7 @@ export class MainPageComponent implements OnInit {
       });
     }
     else {
-      this.backendService.getMultiplePaginatedAlbumsByRank(firstPageNumber, this.pageSize, totalPages, this.rankingsDirections[this.rankingsValue]).subscribe(res => {
+      this.backendService.getMultiplePaginatedAlbumsByRank(firstPageNumber, this.pageSize, totalPages, this.rankingTypes[this.currentRankingType], this.rankingsDirections[this.rankingsValue]).subscribe(res => {
         //We need to grab multiple pages which means that our current song list will need to be deleted.
         //and total list size reset (in case we switched data types).
         this.data = [];
@@ -417,19 +419,30 @@ export class MainPageComponent implements OnInit {
     }
   }
 
-  changeOrderingButtonColor(clickedButton:string) {
-    if (clickedButton != this.currentRankingType) {
+  changeOrderingButtonColor(rankingType:number) {
+    if (rankingType != this.currentRankingType) {
       //we only change the button color if a different button is pressed
-      let buttonDiv = document.getElementById("data-ordering-buttons") as HTMLElement;
+      let overallButton = document.getElementById('overall-song-ranking') as HTMLElement;
+      let averageButton = document.getElementById('average-song-ranking') as HTMLElement;
+      let albumScoreButton = document.getElementById('album-score-ranking') as HTMLElement;
+      let albumMostSongsButton = document.getElementById('most-songs-album-ranking') as HTMLElement;
 
-      let overallButton = buttonDiv.childNodes[0] as HTMLElement;
-      let averageButton = buttonDiv.childNodes[1] as HTMLElement;
-
-      overallButton.classList.replace('pressed-button', 'nonpressed-button');
-      averageButton.classList.replace('pressed-button', 'nonpressed-button');
-
-      if (clickedButton == "overallScore") overallButton.classList.replace('nonpressed-button','pressed-button');
-      else averageButton.classList.replace('nonpressed-button','pressed-button');
+      if (rankingType == 0) {
+        overallButton.classList.replace('nonpressed-button','pressed-button');
+        averageButton.classList.replace('pressed-button', 'nonpressed-button');
+      }
+      else if (rankingType == 1) {
+        averageButton.classList.replace('nonpressed-button','pressed-button');
+        overallButton.classList.replace('pressed-button', 'nonpressed-button');
+      }
+      else if (rankingType == 2) {
+        albumScoreButton.classList.replace('nonpressed-button','pressed-button');
+        albumMostSongsButton.classList.replace('pressed-button', 'nonpressed-button');
+      }
+      else {
+        albumMostSongsButton.classList.replace('nonpressed-button','pressed-button');
+        albumScoreButton.classList.replace('pressed-button', 'nonpressed-button');
+      }
     }
   }
 

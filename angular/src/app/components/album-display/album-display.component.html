@@ -3,12 +3,13 @@
         <h2><u>{{album.title}}</u></h2>
         <h4>Artist: {{album.artist.name}}</h4>
         <h4>Released: {{album.releaseYear}}</h4>
+        <h4>Album Score: {{album.albumScore | number : '1.2-2'}}</h4>
         <h4>Total Songs: {{album.totalTracks}}</h4>
         <h4>Ranked Songs: {{album.songs.length}}</h4>
-        <p *ngFor="let song of album.songs" style="margin:0px;">&nbsp;&nbsp;&nbsp;&nbsp;- {{song.title}}</p><br>
+        <p style="margin:0px;">&nbsp;&nbsp;&nbsp;&nbsp;<u>Song Title: <em>Overall Song Score</em></u></p>
+        <p *ngFor="let song of album.songs" style="margin:0px;">&nbsp;&nbsp;&nbsp;&nbsp;- {{song.title}}: <em>{{song.overallScore | number : '1.2-2'}}</em></p><br>
 
-        <a href="{{albumLink}}" target="_blank">Listen on Spotify</a>
-        <br><br>
+        <a href="{{albumLink}}" target="_blank">Listen on Spotify</a><br>
 
         <h4>Notes:</h4>
         <p style="margin:0px;">{{album.notes}}</p>

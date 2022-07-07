@@ -49,20 +49,20 @@ public class AlbumController {
         }
     }
 
-    @GetMapping(value = "/byRank", params = {"pageNumber", "pageSize", "direction"})
-    public ResponseEntity<Page<Album>> getPaginatedAlbumsByRank(@RequestParam int pageNumber, @RequestParam int pageSize, @RequestParam String direction) {
-        Page<Album> albums = albumService.getPaginatedAlbumsByRank(pageNumber, pageSize, direction);
+    @GetMapping(value = "/byRank", params = {"pageNumber", "pageSize", "sort", "direction"})
+    public ResponseEntity<Page<Album>> getPaginatedAlbumsByRank(@RequestParam int pageNumber, @RequestParam int pageSize, @RequestParam String sort, @RequestParam String direction) {
+        Page<Album> albums = albumService.getPaginatedAlbumsByRank(pageNumber, pageSize, sort, direction);
         if (albums != null) return ResponseEntity.status(200).body(albums);
         else return ResponseEntity.status(400).build();
     }
 
-    @GetMapping(value = "/byRank/multiple", params = {"firstPage", "pageSize", "numberOfPages", "direction"})
-    public ResponseEntity<List<Page<Album>>> getMultiplePaginatedSongsByRank(@RequestParam int firstPage, @RequestParam int pageSize, @RequestParam int numberOfPages, @RequestParam String direction) {
+    @GetMapping(value = "/byRank/multiple", params = {"firstPage", "pageSize", "numberOfPages", "sort", "direction"})
+    public ResponseEntity<List<Page<Album>>> getMultiplePaginatedSongsByRank(@RequestParam int firstPage, @RequestParam int pageSize, @RequestParam int numberOfPages, @RequestParam String sort, @RequestParam String direction) {
         //Same as the above function but lets us collect multiple pages at a time.
         ArrayList<Page<Album>> pages = new ArrayList<>();
 
         for (int i = 0; i < numberOfPages; i++) {
-            pages.add(albumService.getPaginatedAlbumsByRank(firstPage + i, pageSize, direction));
+            pages.add(albumService.getPaginatedAlbumsByRank(firstPage + i, pageSize, sort, direction));
         }
 
         if (pages != null) return ResponseEntity.status(200).body(pages);
