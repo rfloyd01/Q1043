@@ -1,4 +1,5 @@
 <div class="album-display">
+    <img class="album-artwork" [src]="albumArtworkSource" (error)="notLoaded()">
     <div class="album-information">
         <h2><u>{{album.title}}</u></h2>
         <h4>Artist: {{album.artist.name}}</h4>
@@ -14,5 +15,5 @@
         <h4>Notes:</h4>
         <p style="margin:0px;">{{album.notes}}</p>
     </div>
-    <img class="album-artwork" [src]="albumArtworkSource" (error)="notLoaded()">
+    
 </div>

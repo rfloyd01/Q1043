@@ -51,6 +51,7 @@
     <div class="body-flex" *ngIf="currentDisplay == 'Overall Data'">
         <app-song-display class="content-block" *ngIf="currentlySelectedListItem != null && currentDataType == 'song'" [song]="currentlySelectedListItem.data"></app-song-display>
         <app-album-display class="content-block" *ngIf="currentlySelectedListItem != null && currentDataType == 'album'" [album]="currentlySelectedListItem.data"></app-album-display>
+        <app-artist-display class="content-block" *ngIf="currentlySelectedListItem != null && currentDataType == 'artist'" [artist]="currentlySelectedListItem.data"></app-artist-display>
         <div class="flex-item">
             <div style="display: block;">
             <canvas baseChart width="800" height="300"
@@ -60,7 +61,7 @@
                         (chartHover)="chartHovered($event)"
                         (chartClick)="chartClicked($event)" *ngIf="currentlySelectedListItem != null"></canvas>
             </div>
-          </div>
+        </div>
     </div>
     <div class="body-flex" *ngIf="currentDisplay != 'Overall Data'">
         <div class="content-block">Data List</div>

@@ -15,7 +15,7 @@
 .body-flex {
     display: flex;
     width:100%;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 .content-block {
@@ -90,4 +90,5 @@
 
 .table-description {
     max-width: 600px;
+    margin-left: 10px;
 }

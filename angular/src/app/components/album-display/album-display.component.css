@@ -2,6 +2,7 @@
     border: solid;
     padding: 10px;
     max-width: 750px;
+    max-height: 300px;
     display: flex;
     justify-content: space-between;
   }
@@ -22,6 +23,8 @@
 .album-information {
   margin-right: 10px;
   float:left;
+  overflow-y: scroll;
+  width: 450px;
 }
 
 h4 {

@@ -1,4 +1,4 @@
-.song-display{
+.artist-display{
     border: solid;
     padding: 10px;
     max-width: 750px;
@@ -12,7 +12,7 @@
     background-color:#f26925 ;
   }
   
-.album-artwork{
+.artist-artwork{
   /*Songs in Spotify's DB are saved as 640x640 pixels*/
   width: 33%;
   height: 33%;
@@ -20,11 +20,31 @@
   float: left;
 }
 
-.song-information {
+.artist-information {
   margin-right: 10px;
   float:left;
   overflow-y: scroll;
   width: 450px;
+}
+
+.albums {
+    margin-left: 25px;
+}
+
+.albums strong {
+    margin: 0px;
+}
+
+.albums p {
+    margin: 0px 0px 0px 15px;
+}
+
+.songs {
+    margin-left: 25px;
+}
+
+.songs p {
+    margin: 0px;
 }
 
 h4 {

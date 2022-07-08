@@ -18,6 +18,7 @@ import { ChartTestComponent } from './components/chart-test/chart-test.component
 import { NgChartsModule } from 'ng2-charts';
 import { AlbumDisplayComponent } from './components/album-display/album-display.component';
 import { SpotifyTokenComponent } from './components/spotify-token/spotify-token.component';
+import { ArtistDisplayComponent } from './components/artist-display/artist-display.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { SpotifyTokenComponent } from './components/spotify-token/spotify-token.
     ListItemComponent,
     ChartTestComponent,
     AlbumDisplayComponent,
-    SpotifyTokenComponent
+    SpotifyTokenComponent,
+    ArtistDisplayComponent
   ],
   imports: [
     BrowserModule,
