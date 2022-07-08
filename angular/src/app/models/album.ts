@@ -6,6 +6,7 @@ export class Album {
     title!:string;
     releaseYear!:number;
     totalTracks!:number;
+    rankedTracks!:number;
     spotifyURI!:string
     albumArtworkURL!:string;
     artist!:Artist;
@@ -13,12 +14,13 @@ export class Album {
     albumScore!:number;
     notes!:string;
 
-    constructor(id?:number, title?:string, releaseYear?:number, totalTracks?:number, spotifyURI?:string, albumArtworkURL?:string,
+    constructor(id?:number, title?:string, releaseYear?:number, totalTracks?:number, rankedTracks?:number, spotifyURI?:string, albumArtworkURL?:string,
         artist?:Artist, songs?:Song[], albumScore?:number, notes?:string) {
         if (id) this.id = id;
         if (title) this.title = title;
         if (releaseYear) this.releaseYear = releaseYear;
         if (totalTracks) this.totalTracks = totalTracks;
+        if (rankedTracks) this.rankedTracks = rankedTracks;
         if (spotifyURI) this.spotifyURI = spotifyURI;
         if (albumArtworkURL) this.albumArtworkURL = albumArtworkURL;
         if (artist) this.artist = artist;

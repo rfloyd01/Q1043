@@ -4,6 +4,8 @@
         <h4>Artist: {{song.artist}}</h4>
         <h4>Album: {{song.album.title}}</h4>
         <h4>Released: {{song.album.releaseYear}}</h4>
+        <h4>Overall Score: {{song.overallScore | number: '1.2-2'}}</h4>
+        <h4>Average Rank: {{song.averageScore | number: '1.2-2'}}</h4>
         <h4>Spotify Popularity: {{song.popularity}}</h4>
         <a href="{{songLink}}" target="_blank">Listen on Spotify</a>
         <br><br>

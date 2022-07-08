@@ -61,6 +61,7 @@ public class AlbumController {
         //Same as the above function but lets us collect multiple pages at a time.
         ArrayList<Page<Album>> pages = new ArrayList<>();
 
+
         for (int i = 0; i < numberOfPages; i++) {
             pages.add(albumService.getPaginatedAlbumsByRank(firstPage + i, pageSize, sort, direction));
         }

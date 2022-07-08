@@ -379,7 +379,7 @@ export class SpotifyAPIComponent implements OnInit {
 
             //Create an artist object to full in the album object and then put them both in the song object
             let artist:Artist = new Artist(0, parsedRawData[0], []);
-            let album:Album = new Album(0, albumName, parseInt(releaseYear), albumInfo['total_tracks'], albumInfo['id'], artwork, artist, []);
+            let album:Album = new Album(0, albumName, parseInt(releaseYear), albumInfo['total_tracks'], 0, albumInfo['id'], artwork, artist, []);
 
             //console.log("Here's the found album: " + JSON.stringify(album));
             correctSong.album = album;

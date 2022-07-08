@@ -45,7 +45,7 @@ export class MainPageComponent implements OnInit {
   rankingsDirectionImages:string[] = ["assets/down_arrow.png", "assets/up_arrow.png"];
 
   currentRankingType:number = 0;
-  rankingTypes:string[] = ["overallScore", "averageScore", "albumScore", "totalTracks"];
+  rankingTypes:string[] = ["overallScore", "averageScore", "albumScore", "rankedTracks"];
 
   //testSongs:Song[] = [];
   data:any[] = [];
@@ -195,11 +195,14 @@ export class MainPageComponent implements OnInit {
   }
 
   setDataType(dataType:string) {
+    let newDataType:boolean = true;
+
     if (this.currentDataType == dataType) {
       //clicking the currently highlighted data type button has the effect
       //of swapping the order of the data
       this.rankingsValue = (this.rankingsValue + 1) % 2; //can only be 0 or 1
       this.flip *= -1;
+      newDataType = false;
     }
 
     this.changeDataTypeButtonColor(dataType);
@@ -215,8 +218,16 @@ export class MainPageComponent implements OnInit {
     this.data = [];
     this.currentlySelectedListItem = null;
 
-    if (dataType == "song") this.getSongs(0, this.maximumPages, "", this.listStart);
-    else if (dataType == "album")  this.getAlbums(0, this.maximumPages, "", this.listStart);
+    if (dataType == "song") {
+      //before getting information, update the sort parameter
+      if (newDataType) this.currentRankingType = 0; //search for overall rank by default
+      this.getSongs(0, this.maximumPages, "", this.listStart);
+    }
+    else if (dataType == "album") {
+      //before getting information, update the sort parameter
+      if (newDataType) this.currentRankingType = 2; //search by album score by default
+      this.getAlbums(0, this.maximumPages, "", this.listStart);
+    }
 
   }
 
@@ -226,6 +237,7 @@ export class MainPageComponent implements OnInit {
     this.changeOrderingButtonColor(rankingType);
     this.currentRankingType = rankingType;
     
+    console.log(this.rankingTypes[this.currentRankingType]);
 
     //When changing the ranking type we always jump back to the 
     //beginning of the list, so we need to reset the listStart variable.
@@ -324,9 +336,14 @@ export class MainPageComponent implements OnInit {
 
   getAlbums(firstPageNumber:number, totalPages:number, scrollDirection:string, listStart:number) {
     //Same basic idea as the getSongs() function above.
+
+    //If we're searching for albums by most ranked songs it makes sense to invert the sort direction
+    let sortDirection = this.rankingsDirections[this.rankingsValue];
+    if (this.currentRankingType == 3) sortDirection = this.rankingsDirections[(this.rankingsValue + 1) % 2];
+
     if (totalPages == 1) {
       //This get's called when we've triggered the infinite scroll event of the list
-      this.backendService.getPaginatedAlbumsByRank(firstPageNumber, this.pageSize, this.rankingTypes[this.currentRankingType], this.rankingsDirections[this.rankingsValue]).subscribe(res => {
+      this.backendService.getPaginatedAlbumsByRank(firstPageNumber, this.pageSize, this.rankingTypes[this.currentRankingType], sortDirection).subscribe(res => {
         let foundAlbums:Album[] = res['content']; //this function gives us a Java 'Page' object
         this.totalListSize = res['totalElements'];
         this.listStart = listStart;
@@ -343,7 +360,7 @@ export class MainPageComponent implements OnInit {
       });
     }
     else {
-      this.backendService.getMultiplePaginatedAlbumsByRank(firstPageNumber, this.pageSize, totalPages, this.rankingTypes[this.currentRankingType], this.rankingsDirections[this.rankingsValue]).subscribe(res => {
+      this.backendService.getMultiplePaginatedAlbumsByRank(firstPageNumber, this.pageSize, totalPages, this.rankingTypes[this.currentRankingType], sortDirection).subscribe(res => {
         //We need to grab multiple pages which means that our current song list will need to be deleted.
         //and total list size reset (in case we switched data types).
         this.data = [];

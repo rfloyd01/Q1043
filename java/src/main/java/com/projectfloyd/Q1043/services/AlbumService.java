@@ -206,8 +206,8 @@ public class AlbumService {
             }
 
             //Set the album score and save the album
-            //album.setAlbumScore((averageOverallScore / album.getSongs().size()) * ratioMultiplier * totalSongMultiplier);
             album.setAlbumScore((10 / averageOverallScore) * ratioMultiplier);
+            album.setRankedTracks(album.getSongs().size()); //update the total tracks, this value will change as we update album
             albumDAO.save(album);
         }
 
@@ -216,7 +216,7 @@ public class AlbumService {
     public Page<Album> getPaginatedAlbumsByRank(int pageNumber, int pageSize, String sort, String direction) {
         if (pageNumber < 0 || pageSize < 1) return null; //make sure the page request is valid before getting the page
 
-        if (sort.equals("albumScore") || sort.equals("totalTracks")) {
+        if (sort.equals("albumScore") || sort.equals("rankedTracks")) {
             //First get the sort direction, default to ascending
             Sort.Direction dir = direction.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
             Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(dir, sort));
