@@ -63,20 +63,20 @@ public class ArtistService {
     public Page<Artist> getPaginatedArtistsByRank(int pageNumber, int pageSize, String sort, String direction) {
         if (pageNumber < 0 || pageSize < 1) return null; //make sure the page request is valid before getting the page
 
-        if (sort.equals("artistScore") || sort.equals("totalSongs")) {
+        if (sort.equals("artistScore") || sort.equals("rankedTracks")) {
             //First get the sort direction, default to ascending
             Sort.Direction dir = direction.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
             //When sorting, in the instance of a tie (which will happen a lot when sorting by total ranked songs), we
             //do a second ordering by artist name.
-            Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(new Sort.Order(dir, sort), new Sort.Order(Sort.Direction.ASC, "name")));
+            Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(new Sort.Order(dir, sort)));
             Page<Artist> page = artistDAO.findAll(pageable);
 
             //once we have the page, go through all of the albums and clean up the necessary variables for the JSON response.
             for (Artist artist : page.getContent()) cleanDataForJSONResponse(artist);
             return page;
         }
-        else return null; //we can only sort by artist score and total songs
+        else return null; //we can only sort by artist score and ranked tracks
     }
 
     public void generateArtistScores() {
@@ -131,7 +131,7 @@ public class ArtistService {
                 //some artists on the list are probably incorrect so as we remove songs from them we want to
                 //make sure we don't try and divide by 0 here.
                 artist.setArtistScore(1000000); //some arbitrarily high number
-                artist.setTotalRankedSongs(0); //update the total tracks, this value will may change as we update songs
+                artist.setRankedTracks(0); //update the total tracks, this value will may change as we update songs
                 continue; // go to the next artist
             }
 
@@ -140,7 +140,7 @@ public class ArtistService {
 
             //Set the artist score and save the album
             artist.setArtistScore((10 / averageOverallScore) * totalSongsMultiplier);
-            artist.setTotalRankedSongs(totalSongs); //update the total tracks, this value will may change as we update songs
+            artist.setRankedTracks(totalSongs); //update the total tracks, this value will may change as we update songs
 
             artistDAO.save(artist);
         }

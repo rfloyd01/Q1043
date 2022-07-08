@@ -82,7 +82,7 @@ public class SongController {
     }
 
     //Pagination Requests
-    @GetMapping(params = {"pageNumber", "pageSize", "sort", "direction"})
+    @GetMapping(value = "/byRank", params = {"pageNumber", "pageSize", "sort", "direction"})
     public ResponseEntity<Page<Song>> getPaginatedSongsByRank(@RequestParam int pageNumber, @RequestParam int pageSize, @RequestParam String sort, @RequestParam String direction) {
         //There are a few different ways we can get paginated songs by rank from the db. We can get songs in
         //order of their average rank (ascending or descending) and in order of their overall rank (ascending or
@@ -93,7 +93,7 @@ public class SongController {
         else return ResponseEntity.status(400).build();
     }
 
-    @GetMapping(value = "/multiple", params = {"firstPage", "pageSize", "numberOfPages", "sort", "direction"})
+    @GetMapping(value = "/byRank/multiple", params = {"firstPage", "pageSize", "numberOfPages", "sort", "direction"})
     public ResponseEntity<List<Page<Song>>> getMultiplePaginatedSongsByRank(@RequestParam int firstPage, @RequestParam int pageSize, @RequestParam int numberOfPages, @RequestParam String sort, @RequestParam String direction) {
         //Same as the above function but lets as collect multiple pages at a time.
         ArrayList<Page<Song>> pages = new ArrayList<>();

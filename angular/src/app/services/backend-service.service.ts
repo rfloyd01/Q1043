@@ -43,42 +43,22 @@ export class BackendServiceService {
     return this.http.patch<boolean>(this.backendUrl + '/rawdata/clean', newData);
   }
 
-  // addSongData(songData:Song[]):Observable<boolean> {
-  //   return this.http.post<boolean>(this.backendUrl + '/songs', songData);
-  // }
-
   addCompleteSongData(songData:Song[]):Observable<boolean> {
     return this.http.post<boolean>(this.backendUrl + '/songs', songData);
   }
 
-  getPaginatedSongsByRank(pageNumber:number, pageSize:number, sortType:string, direction?:string):Observable<any> {
-    //This function returns a Java Page object. I didn't want to go through the hassle of creating the same object
-    //on the front end (actually for all I know it's already built-in) so I decided to just return an 'any' object.
-    let dir:string = "asc"; //default to ascending order
-    if (direction) dir = direction;
-    return this.http.get<any>(this.backendUrl + '/songs?pageNumber=' + pageNumber + '&pageSize=' + pageSize + '&sort=' + sortType + '&direction=' + dir );
-  }
-  
-  getMultiplePaginatedSongsByRank(firstPageNumber:number, pageSize:number, numberOfPages:number, sortType:string, direction?:string):Observable<any[]> {
-    //This function returns a Java Page object. I didn't want to go through the hassle of creating the same object
-    //on the front end (actually for all I know it's already built-in) so I decided to just return an 'any' object.
-    let dir:string = "asc"; //default to ascending order
-    if (direction) dir = direction;
-    return this.http.get<any>(this.backendUrl + '/songs/multiple?firstPage=' + firstPageNumber + '&pageSize=' + pageSize + '&numberOfPages=' + numberOfPages + '&sort=' + sortType + '&direction=' + dir );
-  }
-
-  getPaginatedAlbumsByRank(pageNumber:number, pageSize:number, sortType:string, direction?:string):Observable<any> {
+  getPaginatedDataByRank(dataType:string, pageNumber:number, pageSize:number, sortType:string, direction?:string):Observable<any> {
     //unlike songs, we only score albums in one way (for now).
     let dir:string = "asc"; //default to ascending order
     if (direction) dir = direction;
-    return this.http.get<any>(this.backendUrl + '/albums/byRank?pageNumber=' + pageNumber + '&pageSize=' + pageSize + '&sort=' + sortType + '&direction=' + dir );
+    return this.http.get<any>(this.backendUrl + '/' + dataType + 's/byRank?pageNumber=' + pageNumber + '&pageSize=' + pageSize + '&sort=' + sortType + '&direction=' + dir );
   }
 
-  getMultiplePaginatedAlbumsByRank(firstPageNumber:number, pageSize:number, numberOfPages:number, sortType:string, direction?:string):Observable<any[]> {
+  getMultiplePaginatedDataByRank(dataType:string, firstPageNumber:number, pageSize:number, numberOfPages:number, sortType:string, direction?:string):Observable<any[]> {
     //This function returns a Java Page object. I didn't want to go through the hassle of creating the same object
     //on the front end (actually for all I know it's already built-in) so I decided to just return an 'any' object.
     let dir:string = "asc"; //default to ascending order
     if (direction) dir = direction;
-    return this.http.get<any>(this.backendUrl + '/albums/byRank/multiple?firstPage=' + firstPageNumber + '&pageSize=' + pageSize + '&numberOfPages=' + numberOfPages + '&sort=' + sortType + '&direction=' + dir );
+    return this.http.get<any>(this.backendUrl + '/' + dataType + 's/byRank/multiple?firstPage=' + firstPageNumber + '&pageSize=' + pageSize + '&numberOfPages=' + numberOfPages + '&sort=' + sortType + '&direction=' + dir );
   }
 }

@@ -40,7 +40,8 @@
                 <button id="overall-song-ranking" class="selection-button pressed-button" *ngIf="currentDataType == 'song'" style="float:left;" (click)="setRankingType(0)">Overall Rankings</button>
                 <button id="average-song-ranking" class="selection-button nonpressed-button" *ngIf="currentDataType == 'song'" style="float:left;" (click)="setRankingType(1)">Average Rankings</button>
                 <button id="album-score-ranking" class="selection-button pressed-button" *ngIf="currentDataType == 'album'" style="float:left;" (click)="setRankingType(2)">Album Score</button>
-                <button id="most-songs-album-ranking" class="selection-button nonpressed-button" *ngIf="currentDataType == 'album'" style="float:left;" (click)="setRankingType(3)">Most Songs</button>
+                <button id="artist-score-ranking" class="selection-button pressed-button" *ngIf="currentDataType == 'artist'" style="float:left;" (click)="setRankingType(3)">Artist Score</button>
+                <button id="most-songs-ranking" class="selection-button nonpressed-button" *ngIf="currentDataType == 'album' || currentDataType == 'artist'" style="float:left;" (click)="setRankingType(4)">Most Songs</button>
             </div>
         </div>
         <div id="item-list" class="content-block data-list" style="flex-grow: 1;" (scroll)="listScrollEventHandler($event)">

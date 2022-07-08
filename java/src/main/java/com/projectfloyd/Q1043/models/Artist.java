@@ -1,7 +1,5 @@
 package com.projectfloyd.Q1043.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -23,8 +21,8 @@ public class Artist {
     @Column(name="artist_score", columnDefinition = "float8 default 0.0")
     private double artistScore;
 
-    @Column(name="total_ranked_songs", columnDefinition = "integer default 0")
-    private int totalRankedSongs;
+    @Column(name="ranked_tracks", columnDefinition = "integer default 0")
+    private int rankedTracks;
 
     @Column(name="notes", columnDefinition = "varchar(255) default ''")
     private String notes;
@@ -33,12 +31,12 @@ public class Artist {
     public Artist() {
     }
 
-    public Artist(int id, String name, List<Album> albums, double artistScore, int totalRankedSongs, String notes) {
+    public Artist(int id, String name, List<Album> albums, double artistScore, int rankedTracks, String notes) {
         this.id = id;
         this.name = name;
         this.albums = albums;
         this.artistScore = artistScore;
-        this.totalRankedSongs = totalRankedSongs;
+        this.rankedTracks = rankedTracks;
         this.notes = notes;
     }
 
@@ -71,9 +69,9 @@ public class Artist {
 
     public void setArtistScore(double artistScore) { this.artistScore = artistScore; }
 
-    public int getTotalRankedSongs() { return totalRankedSongs; }
+    public int getRankedTracks() { return rankedTracks; }
 
-    public void setTotalRankedSongs(int totalRankedSongs) { this.totalRankedSongs = totalRankedSongs; }
+    public void setRankedTracks(int rankedTracks) { this.rankedTracks = rankedTracks; }
 
     public String getNotes() { return notes; }
 
@@ -85,12 +83,12 @@ public class Artist {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Artist artist = (Artist) o;
-        return id == artist.id && artistScore == artist.artistScore && totalRankedSongs == artist.totalRankedSongs && Objects.equals(name, artist.name) && Objects.equals(albums, artist.albums) && Objects.equals(notes, artist.notes);
+        return id == artist.id && artistScore == artist.artistScore && rankedTracks == artist.rankedTracks && Objects.equals(name, artist.name) && Objects.equals(albums, artist.albums) && Objects.equals(notes, artist.notes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, albums, artistScore, totalRankedSongs, notes);
+        return Objects.hash(id, name, albums, artistScore, rankedTracks, notes);
     }
 
     @Override
@@ -100,7 +98,7 @@ public class Artist {
                 ", name='" + name + '\'' +
                 ", albums=" + albums +
                 ", artistScore=" + artistScore +
-                ", totalRankedSongs=" + totalRankedSongs +
+                ", rankedTracks=" + rankedTracks +
                 ", notes='" + notes + '\'' +
                 '}';
     }
@@ -111,7 +109,7 @@ public class Artist {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", artistScore=" + artistScore +
-                ", totalRankedSongs=" + totalRankedSongs +
+                ", rankedTracks=" + rankedTracks +
                 ", notes='" + notes + '\'' +
                 '}';
     }
