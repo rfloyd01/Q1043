@@ -11,6 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 @Service
 public class ArtistService {
 
@@ -74,6 +77,73 @@ public class ArtistService {
             return page;
         }
         else return null; //we can only sort by artist score and total songs
+    }
+
+    public void generateArtistScores() {
+        //NOTE: This function should only be called after generating average scores for all songs in database
+
+        //To get the overall artist score there are two components, a weighted average all of an artist's overall
+        //song scores and a bonus multiplier for shear number of songs.
+        //
+        //To get the weighted overall score, we use the
+        //same version as the album score. We really only care about individual songs that the artist has
+        //put out so we use the same method of getting an average song score for the artist based on the different
+        //overall scores for the songs. Namely, we use the same function used to calculate equivalent parallel resistance
+        //in an electric circuit ( 1 / (1/score_1 + 1/score_2 + ... 1/score_n)). I like this formula because adding
+        //more songs is only beneficial, but songs with higher scores aren't nearly as beneficial as those with lower
+        //scores. This way, the total number of songs, as well as the quality of the songs is accounted for.
+        //
+        //As for the total songs multiplier, this is necessary to penalize artists with only a few songs and reward those
+        //with tons of songs. For example, Don McLean only has a single song on the list, but it's a very good song.
+        //If we only looked at average song scores then he would be pretty close to the top of the artist list, which
+        //I don't really think is fair. This multiplier will penalize artists fairly heavily that only have 3 songs or
+        //less on the list, be fairly neutral for artists that have up to 10 songs and then reward artists with more.
+        //This bonus will flatten off after about 30 songs or so though.
+
+        //First get all of the artists from the database:
+        ArrayList<Artist> allArtists = new ArrayList<>();
+        Iterator<Artist> it = artistDAO.findAll().iterator();
+        while (it.hasNext()) allArtists.add(it.next());
+
+        int counter = 0;
+
+        //Then iterate through them one by one
+        for (Artist artist: allArtists) {
+
+            //if (counter++ > 10) break; //Just used while testing the algorithm
+
+            double averageOverallScore = 0.0;
+            int totalSongs = 0;
+
+            //Calculate the average overall score, this is done by looking at overall song scores
+            //and not album scores.
+            for (Album album : artist.getAlbums()) {
+                for (Song song : album.getSongs()) {
+                    averageOverallScore += (1.0 / song.getOverallScore());
+                    totalSongs++;
+                }
+            }
+
+            //Then calculated the total songs multiplier based on the totalSongs variable
+            double totalSongsMultiplier = 0.0;
+
+            if (totalSongs <= 0 || averageOverallScore <= 0.0) {
+                //some artists on the list are probably incorrect so as we remove songs from them we want to
+                //make sure we don't try and divide by 0 here.
+                artist.setArtistScore(1000000); //some arbitrarily high number
+                artist.setTotalRankedSongs(0); //update the total tracks, this value will may change as we update songs
+                continue; // go to the next artist
+            }
+
+            if (totalSongs <= 3) totalSongsMultiplier = 23.75 * totalSongs * totalSongs - 138.75 * totalSongs + 203.75;
+            else totalSongsMultiplier = 4.0 / totalSongs;
+
+            //Set the artist score and save the album
+            artist.setArtistScore((10 / averageOverallScore) * totalSongsMultiplier);
+            artist.setTotalRankedSongs(totalSongs); //update the total tracks, this value will may change as we update songs
+
+            artistDAO.save(artist);
+        }
 
     }
 }

@@ -67,4 +67,9 @@ public class ArtistController {
         if (pages != null) return ResponseEntity.status(200).body(pages);
         else return ResponseEntity.status(400).build();
     }
+
+    @PostMapping("/createScore")
+    public void createAlbumScores() {
+        artistService.generateArtistScores();
+    }
 }
