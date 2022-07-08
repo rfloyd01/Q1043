@@ -193,11 +193,17 @@ export class MainPageComponent implements OnInit {
       newDataType = false;
     }
 
+    //Since album and artist share a button, this block makes sure that this button's
+    //color gets changed appropriately.
     this.changeDataTypeButtonColor(dataType);
+    if (dataType == 'album' || dataType == 'artist') {
+      if (this.currentDataType == 'album' || this.currentDataType == 'artist') this.changeOrderingButtonColor(-1);
+    }
+
     this.currentDataType = dataType;
     this.setDescription();
 
-    if (dataType == 'album' || dataType == 'artist') this.changeOrderingButtonColor(-1);
+    
 
     //reset the jump to input box
     let jumpToInput = document.getElementById('jump-to') as HTMLInputElement;
@@ -223,8 +229,7 @@ export class MainPageComponent implements OnInit {
     
     this.changeOrderingButtonColor(rankingType);
     this.currentRankingType = rankingType;
-    
-    console.log(this.rankingTypes[this.currentRankingType]);
+
 
     //When changing the ranking type we always jump back to the 
     //beginning of the list, so we need to reset the listStart variable.
