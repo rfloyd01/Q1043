@@ -21,14 +21,15 @@ export class SpotifyAPIComponent implements OnInit {
   searchSong:string = '';
   loggedIn:boolean = false;
   foundSongs:Array<Song> = [];
+  artists:Array<Artist> = [];
   rawData:Array<RawData> = [];
   problemSongs:Array<RawData> = []; //For some reasons, not every song can be searched by track (like "'Aint Wastin' Time No More"), add problem songs here as they're encountered
-  pageNumber:number = 1;
+  pageNumber:number = 0;
   pageSize:number = 10;
   printScoreResults:boolean = false; //used for debugging issues with the song score algorithm, set to true to see individual scores for songs
   processedRequests:number = 0;
   processedProblems:number = 0;
-  maximumPage:number = 0; //for now just do ten pages worth of raw data to see how things are working
+  maximumPage:number = 37; //for now just do ten pages worth of raw data to see how things are working
   cleanRawData:boolean = true; //if this is true we try to create "complete" songs
   yearsOfData:number = 21;
 
@@ -59,12 +60,14 @@ export class SpotifyAPIComponent implements OnInit {
         //Spotify API.
         
         this.sleep(5000); //set a timer for 5 seconds so we don't make too many API calls too quickly
-        this.getSongsFromRawDataArray(); //with the raw data loaded we can now query the Spotify API
+
+        //this.getSongsFromRawDataArray(); //with the raw data loaded we can now query the Spotify API
+        this.getArtistsFromSpotify();
       }
       else if (res == 2) {
         //The updated raw data has been successfully saved into the backend database, we can now save
         //the song data in the database as well.
-        //console.log(this.foundSongs);
+
         this.addSongDataToDatabase();
       }
     })
@@ -84,8 +87,9 @@ export class SpotifyAPIComponent implements OnInit {
           this.searchForGenericSongs();
         }
         else {
-          this.updateRawData();
+          //this.updateRawData();
           this.pageNumber++; //increment the page number after successfully retrieving raw data from back end
+          this.addArtistsToDatabase();
         }
       }
       else if (res == -1) {
@@ -96,7 +100,8 @@ export class SpotifyAPIComponent implements OnInit {
 
         //First make the call for paginated data from the backend
         this.processedRequests = 0; //reset our processed data counter to 0
-        this.getRawData();
+        //this.getRawData();
+        this.getArtistsFromBackend();
       }
     })
 
@@ -689,6 +694,51 @@ export class SpotifyAPIComponent implements OnInit {
         })
       }
     }
+  }
+
+  getArtistsFromBackend() {
+    //first clear the current artist list
+    this.artists = [];
+    this.backendService.getPaginatedArtistsOrderedById(this.pageNumber, this.pageSize).subscribe(res => {
+      this.artists = res['content']; //we receive a Page object from the backend here
+      this.setRawDataEvent = 1; //continue the data gathering chain
+    })
+  }
+
+  getArtistsFromSpotify() {
+    //for (let artist of this.artists) {
+      for (let i:number = 0; i < this.artists.length; i++) {
+        this.apiService.getArtistInformation(this.artists[i].name).subscribe(res => {
+          if (res['artists']['total'] != 0) {
+            //make sure that we get at least one artist, if not then don't attempt any logic here
+            let foundArtists:Array<any> = res['artists']['items'];
+            for (let foundArtist of foundArtists) {
+              //the artist name should be an EXACT match
+              if (foundArtist['name'] == this.artists[i].name) {
+                //we found our match, update only the URL and URI values
+                this.artists[i].spotifyURI = foundArtist['id'];
+
+                let imageOptions:Array<any> = foundArtist['images'];
+                if (imageOptions.length > 0) this.artists[i].artistArtworkURL = imageOptions[0]['url'];
+                break; //no need to keep looping
+              }
+            }
+          }
+
+          this.setSongDataEvent = ++this.processedRequests;
+        })
+    }
+  }
+
+  addArtistsToDatabase() {
+    this.backendService.updateArtists(this.artists).subscribe(res => {
+      if (!res) {
+        console.log("There was an issue trying to update at least one of the artists.");
+      }
+
+      //success or no, set the song data event to keep the data gathering chain going
+      this.setSongDataEvent = -1;
+    })
   }
 
 }

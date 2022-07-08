@@ -5,18 +5,18 @@ export class Artist {
     name!:string;
     albums!:Album[];
     artistScore!:number;
-    totalRankedSongs!:number;
+    rankedTracks!:number;
     spotifyURI!:string;
     artistArtworkURL!:string;
     notes!:string;
 
     constructor(id?:number, name?:string, albums?:Album[], artistScore?:number,
-        totalRankedSongs?:number, spotifyURI?:string, artistArtworkURL?:string, notes?:string) {
+        rankedTracks?:number, spotifyURI?:string, artistArtworkURL?:string, notes?:string) {
         if (id) this.id = id;
         if (name) this.name = name;
         if (albums) this.albums = albums;
         if (artistScore) this.artistScore = artistScore;
-        if (totalRankedSongs) this.totalRankedSongs = totalRankedSongs;
+        if (rankedTracks) this.rankedTracks = rankedTracks;
         if (spotifyURI) this.spotifyURI = spotifyURI;
         if (artistArtworkURL) this.artistArtworkURL = artistArtworkURL;
         if (notes) this.notes = notes;

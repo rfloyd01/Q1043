@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Artist } from '../models/artist';
 import { RawData } from '../models/raw-data';
 import { Song } from '../models/song';
 
@@ -67,6 +68,6 @@ export class BackendServiceService {
   }
 
   updateArtists(artists:Artist[]):Observable<boolean> {
-
+    return this.http.put<boolean>(this.backendUrl + '/artists/byId', artists);
   }
 }

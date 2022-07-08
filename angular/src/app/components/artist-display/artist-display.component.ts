@@ -10,7 +10,8 @@ export class ArtistDisplayComponent implements OnInit {
 
   @Input() artist!:Artist;
   rankedAlbums:number = 0;
-  //albumLink:string = "";
+  artistArtworkSource:string = "";
+  artistLink:string = "";
 
   constructor() { }
 
@@ -19,9 +20,9 @@ export class ArtistDisplayComponent implements OnInit {
 
   ngOnChanges() {
     //this function gets called whenever a new song is selected.
-    //this.albumLink = "https://open.spotify.com/album/" + this.album.spotifyURI;
-    //this.albumArtworkSource = this.album.albumArtworkURL;
+    this.artistLink = "https://open.spotify.com/artist/" + this.artist.spotifyURI;
     this.rankedAlbums = this.artist.albums.length;
+    this.artistArtworkSource = this.artist.artistArtworkURL;
   }
 
   notLoaded() {

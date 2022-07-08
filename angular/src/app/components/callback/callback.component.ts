@@ -43,8 +43,8 @@ export class CallbackComponent implements OnInit {
         this.cookieService.deleteCookie('spotify_auth_state'); //don't need this cookie anymore
         //this.apiService.setAuthenticatedUser(newUser); //set the logged in user's crednetials in the API service as we'll need access to the tokens
         
-        //this.router.navigateByUrl(''); //go back to the homepage
-        this.router.navigateByUrl('spotifyAPI'); //go back to the homepage
+        this.router.navigateByUrl(''); //go back to the homepage
+        //this.router.navigateByUrl('spotifyAPI'); //uncomment this and comment above line to access api page
 
       }, error => {
         console.log("Got the following error: " + JSON.stringify(error['error']));

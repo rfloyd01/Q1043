@@ -1,8 +1,9 @@
 <div class="artist-display">
-    <!-- <img class="artist-artwork" [src]="albumArtworkSource" (error)="notLoaded()"> -->
+    <img class="artist-artwork" [src]="artistArtworkSource" (error)="notLoaded()">
     <div class="artist-information">
         <h2><u>{{artist.name}}</u></h2>
         <h4>Artist Score: {{artist.artistScore | number : '1.2-2'}}</h4>
+        <h4>Ranked Songs: {{artist.rankedTracks}}</h4>
         <h4>Ranked Albums: {{rankedAlbums}}</h4>
         <div class="albums" *ngFor="let album of artist.albums">
             <strong><em>{{album.title}}:</em></strong><br>
@@ -11,7 +12,9 @@
             <div class="songs" *ngFor="let song of album.songs">
                 <p>- {{song.title}}: <em>{{song.overallScore | number : '1.2-2'}}</em></p>
             </div>
-        </div>
+        </div><br>
+
+        <a href="{{artistLink}}" target="_blank">Listen on Spotify</a><br>
 
         <h4>Notes:</h4>
         <p style="margin:0px;">{{artist.notes}}</p>
