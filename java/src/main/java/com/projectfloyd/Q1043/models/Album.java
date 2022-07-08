@@ -1,6 +1,7 @@
 package com.projectfloyd.Q1043.models;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -181,4 +182,5 @@ public class Album {
                 ", notes='" + notes + '\'' +
                 '}';
     }
+
 }

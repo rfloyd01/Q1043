@@ -20,14 +20,26 @@ public class Artist {
     //@JsonManagedReference
     private List<Album> albums;
 
+    @Column(name="artist_score", columnDefinition = "float8 default 0.0")
+    private double artistScore;
+
+    @Column(name="total_ranked_songs", columnDefinition = "integer default 0")
+    private int totalRankedSongs;
+
+    @Column(name="notes", columnDefinition = "varchar(255) default ''")
+    private String notes;
+
     //CONSTRUCTORS
     public Artist() {
     }
 
-    public Artist(int id, String name, List<Album> albums) {
+    public Artist(int id, String name, List<Album> albums, double artistScore, int totalRankedSongs, String notes) {
         this.id = id;
         this.name = name;
         this.albums = albums;
+        this.artistScore = artistScore;
+        this.totalRankedSongs = totalRankedSongs;
+        this.notes = notes;
     }
 
     //GETTERS AND SETTERS
@@ -55,18 +67,30 @@ public class Artist {
         this.albums = albums;
     }
 
+    public double getArtistScore() { return artistScore; }
+
+    public void setArtistScore(double artistScore) { this.artistScore = artistScore; }
+
+    public int getTotalRankedSongs() { return totalRankedSongs; }
+
+    public void setTotalRankedSongs(int totalRankedSongs) { this.totalRankedSongs = totalRankedSongs; }
+
+    public String getNotes() { return notes; }
+
+    public void setNotes(String notes) { this.notes = notes; }
+
     //SERIALIZATION
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Artist artist = (Artist) o;
-        return id == artist.id && Objects.equals(name, artist.name) && Objects.equals(albums, artist.albums);
+        return id == artist.id && artistScore == artist.artistScore && totalRankedSongs == artist.totalRankedSongs && Objects.equals(name, artist.name) && Objects.equals(albums, artist.albums) && Objects.equals(notes, artist.notes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, albums);
+        return Objects.hash(id, name, albums, artistScore, totalRankedSongs, notes);
     }
 
     @Override
@@ -75,6 +99,9 @@ public class Artist {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", albums=" + albums +
+                ", artistScore=" + artistScore +
+                ", totalRankedSongs=" + totalRankedSongs +
+                ", notes='" + notes + '\'' +
                 '}';
     }
 
@@ -83,6 +110,9 @@ public class Artist {
         return "Artist{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", artistScore=" + artistScore +
+                ", totalRankedSongs=" + totalRankedSongs +
+                ", notes='" + notes + '\'' +
                 '}';
     }
 }

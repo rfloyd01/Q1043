@@ -57,7 +57,7 @@ public class AlbumController {
     }
 
     @GetMapping(value = "/byRank/multiple", params = {"firstPage", "pageSize", "numberOfPages", "sort", "direction"})
-    public ResponseEntity<List<Page<Album>>> getMultiplePaginatedSongsByRank(@RequestParam int firstPage, @RequestParam int pageSize, @RequestParam int numberOfPages, @RequestParam String sort, @RequestParam String direction) {
+    public ResponseEntity<List<Page<Album>>> getMultiplePaginatedAlbumsByRank(@RequestParam int firstPage, @RequestParam int pageSize, @RequestParam int numberOfPages, @RequestParam String sort, @RequestParam String direction) {
         //Same as the above function but lets us collect multiple pages at a time.
         ArrayList<Page<Album>> pages = new ArrayList<>();
 
