@@ -60,6 +60,19 @@ public class ArtistService {
         }
     }
 
+    public Page<Artist> getPaginatedArtistsById(int pageNumber, int pageSize) {
+        if (pageNumber < 0 || pageSize < 1) return null; //make sure the page request is valid before getting the page
+
+        //As of the creation of this function I really only care about getting all of the artists in ascending order
+        //by their id. Because of this there's no need to pass in a 'sort' or 'direction' variable
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.ASC, "id"));
+        Page<Artist> page = artistDAO.findAll(pageable);
+
+        //once we have the page, go through all of the albums and clean up the necessary variables for the JSON response.
+        for (Artist artist : page.getContent()) cleanDataForJSONResponse(artist);
+        return page;
+    }
+
     public Page<Artist> getPaginatedArtistsByRank(int pageNumber, int pageSize, String sort, String direction) {
         if (pageNumber < 0 || pageSize < 1) return null; //make sure the page request is valid before getting the page
 
@@ -145,5 +158,17 @@ public class ArtistService {
             artistDAO.save(artist);
         }
 
+    }
+
+    public boolean updateArtistArtworkAndURIById(Artist artist) {
+        //takes a single artist and updates their artowkr URL and spotify URI in the database
+        Artist dbArtist = artistDAO.findById(artist.getId()).orElse(null);
+
+        if (dbArtist == null) return false;
+        dbArtist.setArtistArtworkURL(artist.getArtistArtworkURL());
+        dbArtist.setSpotifyURI(artist.getSpotifyURI());
+        artistDAO.save(dbArtist);
+
+        return true;
     }
 }

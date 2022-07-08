@@ -61,4 +61,12 @@ export class BackendServiceService {
     if (direction) dir = direction;
     return this.http.get<any>(this.backendUrl + '/' + dataType + 's/byRank/multiple?firstPage=' + firstPageNumber + '&pageSize=' + pageSize + '&numberOfPages=' + numberOfPages + '&sort=' + sortType + '&direction=' + dir );
   }
+
+  getPaginatedArtistsOrderedById(pageNumber:number, pageSize:number):Observable<any> {
+    return this.http.get<any>(this.backendUrl + '/artists/byId?pageNumber=' + pageNumber + '&pageSize=' + pageSize);
+  }
+
+  updateArtists(artists:Artist[]):Observable<boolean> {
+
+  }
 }

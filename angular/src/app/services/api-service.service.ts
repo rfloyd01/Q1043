@@ -87,4 +87,21 @@ export class ApiServiceService {
     
     return this.http.get<any>(this.searchURLString, httpOptions);
   }
+
+  getArtistInformation(artistName:string):Observable<any> {
+    //I decided after getting all of the album information that it would also be nice to have the URI and artwork URL for artists as 
+    //well. All of the artists in the database (with the exception of those with non-UTF-8 characters in their name) should be exactly 
+    //the way they are in spotify.
+    let queryString:string = artistName;
+    let httpParameters = new HttpParams();
+    httpParameters = httpParameters.append('q', queryString);
+    httpParameters = httpParameters.append('type', 'artist'); //for some reason we get better results when searching by track instead of album
+    httpParameters = httpParameters.append('limit', '5'); //we have better info than with unclean raw data so no need to search for full 20 items
+    let httpOptions = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer ' + this.authenticatedUser.accessToken),
+      params: httpParameters
+    };
+    
+    return this.http.get<any>(this.searchURLString, httpOptions);
+  }
 }

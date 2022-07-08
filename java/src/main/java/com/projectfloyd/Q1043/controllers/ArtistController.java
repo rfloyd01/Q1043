@@ -48,6 +48,27 @@ public class ArtistController {
         }
     }
 
+    @GetMapping(value = "/byId", params = {"pageNumber", "pageSize"})
+    public ResponseEntity<Page<Artist>> getPaginatedArtistsById(@RequestParam int pageNumber, @RequestParam int pageSize) {
+        Page<Artist> artists = artistService.getPaginatedArtistsById(pageNumber, pageSize);
+        if (artists != null) return ResponseEntity.status(200).body(artists);
+        else return ResponseEntity.status(400).build();
+    }
+
+    @PutMapping(value= "/byId")
+    public ResponseEntity<Boolean> updateArtistsArtworkAndURIById(@RequestBody List<Artist> artists) {
+        //this function was created to add artist artwork and spotify uri to artists (en masse) that already
+        //exist in the data base. I don't want to mess up the current album and song relation ships so this
+        //function will ONLY update the artwork url and spotify uri variables while maintaining everything else.
+        boolean allWorked = true;
+        for (Artist artist: artists) {
+            if (!artistService.updateArtistArtworkAndURIById(artist)) allWorked = false;
+        }
+
+        if (allWorked) return ResponseEntity.status(200).body(allWorked);
+        else return ResponseEntity.status(400).body(allWorked);
+    }
+
     @GetMapping(value = "/byRank", params = {"pageNumber", "pageSize", "sort", "direction"})
     public ResponseEntity<Page<Artist>> getPaginatedArtistsByRank(@RequestParam int pageNumber, @RequestParam int pageSize, @RequestParam String sort, @RequestParam String direction) {
         Page<Artist> artists = artistService.getPaginatedArtistsByRank(pageNumber, pageSize, sort, direction);
