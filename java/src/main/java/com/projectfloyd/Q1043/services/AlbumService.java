@@ -219,7 +219,10 @@ public class AlbumService {
         if (sort.equals("albumScore") || sort.equals("rankedTracks")) {
             //First get the sort direction, default to ascending
             Sort.Direction dir = direction.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
-            Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(dir, sort));
+
+            //When sorting, in the instance of a tie (which will happen a lot when sorting by total ranked songs), we
+            //do a second ordering by album title.
+            Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(new Sort.Order(dir, sort), new Sort.Order(Sort.Direction.ASC, "title")));
             Page<Album> page = albumDAO.findAll(pageable);
 
             //once we have the page, go through all of the albums and clean up the necessary variables for the JSON response.
