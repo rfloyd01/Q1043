@@ -21,7 +21,8 @@ export class MainPageComponent implements OnInit {
     Chart.register(Annotation);
   }
 
-  buttonList:string[] = ["Overall Data", "2021", "2020", "2019"];
+  buttonList:string[] = ["Overall Data", "2021", "2020", "2019", "2018", "2017", "2016", "2015", "2014", "2013", "2012",
+  "2011", "2010", "2009", "2008", "2007", "2006", "2005", "2004", "2003", "2002", "2001"];
   currentDisplay:string = "Overall Data";
   colorOptions:string[] = ["white", "lightgrey"];
   currentlySelectedListItem!:ListItemComponent|null;
@@ -45,7 +46,7 @@ export class MainPageComponent implements OnInit {
   rankingsDirectionImages:string[] = ["assets/down_arrow.png", "assets/up_arrow.png"];
 
   currentRankingType:number = 0;
-  rankingTypes:string[] = ["overallScore", "averageScore", "albumScore", "artistScore", "rankedTracks", "year"];
+  rankingTypes:string[] = ["overallScore", "averageScore", "albumScore", "artistScore", "rankedTracks", "year", "specific_year"];
 
   data:any[] = [];
   listStart:number = 1;
@@ -89,8 +90,36 @@ export class MainPageComponent implements OnInit {
     this.getData(0, this.maximumPages, "", 1);
   }
 
-  buttonClicked(value:string) {
-    this.currentDisplay = value;
+  screenSelect(value:string) {
+    //This function gets called when selecting a different "page" from the side navbar
+    if (value != this.currentDisplay) {
+      this.currentlySelectedListItem = null; //don't carry selection between screens
+
+      //By default, we display song data no matter what page we're looking at
+      //and we want data to be in ascending order
+      this.currentDataType = 'song';
+      this.rankingsValue = 0;
+      this.flip = -1;
+
+      if (value == "Overall Data") this.currentRankingType = 0;
+      else {
+        //we need to change the value at the end of therankingTypes array
+        if (this.rankingTypes[6] != 'rank' + value) {
+          
+          if (this.currentDisplay != "Overall Data") {
+            this.currentRankingType = 7; //temporarily set this variable a different value
+            this.changeOrderingButtonColor(6);
+          }
+        }
+        this.currentRankingType = 6; //change this back
+        this.rankingTypes[6] = 'rank' + value;
+      }
+
+      //If we select a new page then we need to grab data for the appropriate year
+      this.currentDisplay = value;
+
+      this.getData(0, this.maximumPages, "", this.listStart);
+    }
   }
 
   listItemSelected(clickedItem:ListItemComponent) {
@@ -236,11 +265,23 @@ export class MainPageComponent implements OnInit {
   }
 
   setRankingType(rankingType:number) {
-    if (this.currentRankingType == rankingType) return; //no need to change anything
+    if (rankingType == 6) {
+      this.currentRankingType = 7; //A poor workaround but use for now
+      this.changeOrderingButtonColor(rankingType);
+      this.currentRankingType = 6;
+    }
+    if (this.currentRankingType == rankingType && rankingType != 6) return; //no need to change anything
     
     this.changeOrderingButtonColor(rankingType);
-    this.currentRankingType = rankingType;
 
+    //Only change the ranking type on the overall data page
+    if (rankingType < 6) this.currentRankingType = rankingType;
+    else {
+      //Set ascending or descending for individual year data
+      this.flip *= -1;
+      if (rankingType == 6) this.rankingsValue = 0;
+      else if (rankingType == 7) this.rankingsValue = 1;
+    }
 
     //When changing the ranking type we always jump back to the 
     //beginning of the list, so we need to reset the listStart variable.
@@ -430,6 +471,8 @@ export class MainPageComponent implements OnInit {
       let artistScoreButton = document.getElementById('artist-score-ranking') as HTMLElement;
       let mostSongsButton = document.getElementById('most-songs-ranking') as HTMLElement;
       let yearButton = document.getElementById('year-ranking') as HTMLElement;
+      let ascButton = document.getElementById('asc-ranking') as HTMLElement;
+      let descButton = document.getElementById('desc-ranking') as HTMLElement;
 
       if (rankingType == 0) {
         overallButton.classList.replace('nonpressed-button','pressed-button');
@@ -458,6 +501,14 @@ export class MainPageComponent implements OnInit {
       else if (rankingType == 5) {
         yearButton.classList.replace('nonpressed-button','pressed-button');
         mostSongsButton.classList.replace('pressed-button', 'nonpressed-button');
+      }
+      else if (rankingType == 6) {
+        ascButton.classList.replace('nonpressed-button','pressed-button');
+        descButton.classList.replace('pressed-button', 'nonpressed-button');
+      }
+      else if (rankingType == 7) {
+        descButton.classList.replace('nonpressed-button','pressed-button');
+        ascButton.classList.replace('pressed-button', 'nonpressed-button');
       }
       else {
         //This is just to reset the color of the shared 'most songs' button

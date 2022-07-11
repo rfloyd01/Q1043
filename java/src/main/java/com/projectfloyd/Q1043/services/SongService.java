@@ -197,25 +197,123 @@ public class SongService {
     public Page<Song> getPaginatedSongsByRank(int pageNumber, int pageSize, String sort, String direction) {
         if (pageNumber < 0 || pageSize < 1) return null; //make sure the page request is valid before getting the page
 
-        if (sort.equals("averageScore") || sort.equals("overallScore")) {
-            //First get the sort direction, default to ascending
-            Sort.Direction dir = direction.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
-            Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(dir, sort));
-            Page<Song> page = songDAO.findAll(pageable);
+        //First get the sort direction, default to ascending
+        Sort.Direction dir = direction.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(dir, sort));
 
-            //once we have the page, go through all the items and create the rankings arrays. Also, remove the song
-            //arrays from each Album object, and the album arrays from each artist object to we don't have issues
-            //when trying to create JSON responses.
-            for (Song song : page.getContent()) {
-                song.createRankingsArray();
-                Album album = song.getAlbum();
-                if (album != null) {
-                    song.getAlbum().getArtist().setAlbums(new ArrayList<>());
-                    song.getAlbum().setSongs(new ArrayList<>());
+        Page<Song> page; //define empty page object
+        if (sort.equals("overallScore") || sort.equals("averageScore")) page = songDAO.findAll(pageable);
+        else {
+            //We're searching for a page of songs by an individual year of the list. Each column of year
+            //data contains lots of 0's because not every song in the database is ranked in every year
+            //and including all of these 0 values will mess up our page numbers. We can tell the database
+            //to only count rows where the value of a specific column is greater than a certain value, however,
+            //I'm not currently sure how to combine this functionality with a Sort object. Instead, a separate
+            //function is needed for each of these columns... I'm sure there's a better way to do this but
+            //I'm not currently sure what it is. *Note, I hate this below switch statement.
+            switch(sort) {
+                case "rank2001": {
+                    page = songDAO.findByRank2001GreaterThan(0, pageable);
+                    break;
                 }
+                case "rank2002": {
+                    page = songDAO.findByRank2002GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2003": {
+                    page = songDAO.findByRank2003GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2004": {
+                    page = songDAO.findByRank2004GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2005": {
+                    page = songDAO.findByRank2005GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2006": {
+                    page = songDAO.findByRank2006GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2007": {
+                    page = songDAO.findByRank2007GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2008": {
+                    page = songDAO.findByRank2008GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2009": {
+                    page = songDAO.findByRank2009GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2010": {
+                    page = songDAO.findByRank2010GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2011": {
+                    page = songDAO.findByRank2011GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2012": {
+                    page = songDAO.findByRank2012GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2013": {
+                    page = songDAO.findByRank2013GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2014": {
+                    page = songDAO.findByRank2014GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2015": {
+                    page = songDAO.findByRank2015GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2016": {
+                    page = songDAO.findByRank2016GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2017": {
+                    page = songDAO.findByRank2017GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2018": {
+                    page = songDAO.findByRank2018GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2019": {
+                    page = songDAO.findByRank2019GreaterThan(0, pageable);
+                    break;
+                }
+                case "rank2020": {
+                    page = songDAO.findByRank2020GreaterThan(0, pageable);
+                    break;
+                }
+                default: page = songDAO.findByRank2021GreaterThan(0, pageable);
             }
-            return page;
         }
-        else return null; //we can only sort by 'average' or 'overall'
+
+        //once we have the page, go through all the items and create the rankings arrays. Also, remove the song
+        //arrays from each Album object, and the album arrays from each artist object to we don't have issues
+        //when trying to create JSON responses.
+        for (Song song : page.getContent()) {
+            song.createRankingsArray();
+            Album album = song.getAlbum();
+            if (album != null) {
+                song.getAlbum().getArtist().setAlbums(new ArrayList<>());
+                song.getAlbum().setSongs(new ArrayList<>());
+            }
+        }
+        return page;
     }
+
+//    public List<Song> test() {
+//        Pageable pageable = PageRequest.of(0, 5);
+//        ArrayList<Song> songs = new ArrayList<>(songDAO.findByRank2019GreaterThan(0, pageable));
+//        for (Song song: songs) song.setAlbum(null);
+//        return songs;
+//    }
 }

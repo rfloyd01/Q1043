@@ -1,4 +1,4 @@
-<app-side-navbar [buttonList]="buttonList" (buttonClickEvent)="buttonClicked($event)"></app-side-navbar>
+<app-side-navbar [buttonList]="buttonList" (buttonClickEvent)="screenSelect($event)"></app-side-navbar>
 <div class="main-body">
     <div class="body-flex" *ngIf="currentDisplay == 'Overall Data'">
         <div class="table-description">
@@ -65,8 +65,19 @@
         </div>
     </div>
     <div class="body-flex" *ngIf="currentDisplay != 'Overall Data'">
-        <div class="content-block">Data List</div>
-        <div class="content-block">Data List</div>
-        <div class="content-block">Info about selection</div>
+        <div class="content-block">
+            <div style="display:flex; align-items: center;">
+                <input id="jump-to" class="search-bar" placeholder="jump to number..." [(ngModel)]="jumpToNumber">
+                <button class="search-button" (click)="jumpTo()">Go</button>
+            </div>
+            <div id="data-ordering-buttons" class="content-block button-flex">
+                <button id="asc-ranking" class="selection-button pressed-button" style="float:left;" (click)="setRankingType(6)">Ascending Order</button>
+                <button id="desc-ranking" class="selection-button nonpressed-button" style="float:left;" (click)="setRankingType(7)">Descending Order</button>
+            </div>
+        </div>
+        <div id="item-list" class="content-block data-list" style="flex-grow: 1;" (scroll)="listScrollEventHandler($event)">
+            <app-list-item *ngFor="let datum of data; index as i" [backgroundColorValue]="i % 2" [listValue]="listStart - i * flip" [data]="datum" [dataType]="currentDataType" (clickEvent)="listItemSelected($event)"></app-list-item>
+        </div>
+        <app-song-display class="content-block" *ngIf="currentlySelectedListItem != null" [song]="currentlySelectedListItem.data"></app-song-display>
     </div>
 </div>

@@ -106,4 +106,10 @@ public class SongController {
         else return ResponseEntity.status(400).build();
     }
 
+//    @GetMapping(value = "/test")
+//    public ResponseEntity<List<Song>> repositoryTest() {
+//        ArrayList<Song> songs = new ArrayList<>(songService.test());
+//        return ResponseEntity.status(200).body(songs);
+//    }
+
 }
