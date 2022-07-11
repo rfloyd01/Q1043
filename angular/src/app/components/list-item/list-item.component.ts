@@ -20,9 +20,9 @@ export class ListItemComponent implements OnInit {
     if (this.dataType == "song" || this.dataType == "album") this.content += this.data['title'];
     else if (this.dataType == "artist") this.content += this.data['name'];
     else {
-      //year data will be sent via the Album object
-      let releaseYear:number = this.data['releaseYear'];
-      this.content += releaseYear.toString();
+      //year data only contains a 'year' variable and a 'rankedTracks' variable
+      //let releaseYear:number = this.data['year'];
+      this.content += this.data['year'] + ': ' + this.data['rankedTracks'] + ' songs' ;
     }
   }
 

@@ -2,6 +2,7 @@ package com.projectfloyd.Q1043.controllers;
 
 import com.projectfloyd.Q1043.models.Album;
 import com.projectfloyd.Q1043.models.Song;
+import com.projectfloyd.Q1043.models.Year;
 import com.projectfloyd.Q1043.services.AlbumService;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,13 +62,22 @@ public class AlbumController {
         //Same as the above function but lets us collect multiple pages at a time.
         ArrayList<Page<Album>> pages = new ArrayList<>();
 
-
         for (int i = 0; i < numberOfPages; i++) {
             pages.add(albumService.getPaginatedAlbumsByRank(firstPage + i, pageSize, sort, direction));
         }
 
         if (pages != null) return ResponseEntity.status(200).body(pages);
         else return ResponseEntity.status(400).build();
+    }
+
+    @GetMapping(value = "/byYear")
+    public ResponseEntity<List<Year>> getRankedYears() {
+        //this function looks at all of the albums and creates an array containing all the years with ranked songs,
+        //as well as how many songs are ranked in each year.
+        ArrayList<Year> years = albumService.getRankedYears();
+
+        if (years != null) return ResponseEntity.status(200).body(years);
+        else return ResponseEntity.status(400).body(years);
     }
 
     @PostMapping("/createScore")

@@ -45,7 +45,7 @@ export class MainPageComponent implements OnInit {
   rankingsDirectionImages:string[] = ["assets/down_arrow.png", "assets/up_arrow.png"];
 
   currentRankingType:number = 0;
-  rankingTypes:string[] = ["overallScore", "averageScore", "albumScore", "artistScore", "rankedTracks"];
+  rankingTypes:string[] = ["overallScore", "averageScore", "albumScore", "artistScore", "rankedTracks", "year"];
 
   data:any[] = [];
   listStart:number = 1;
@@ -141,14 +141,25 @@ export class MainPageComponent implements OnInit {
                   '2021']
       }
     }
-    else if (this.currentDataType == 'album') {
+    else if (this.currentDataType == 'album' || this.currentDataType == 'artist') {
       let numberOfSongsByYear:number[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-      for (let song of this.currentlySelectedListItem['data']['songs']) {
-        for (let i:number = 2001; i <= 2021; i++) {
-          if(song['rankings'][i - 2001]) numberOfSongsByYear[i - 2001]++
+
+      if (this.currentDataType == 'album') {
+        for (let song of this.currentlySelectedListItem['data']['songs']) {
+          for (let i:number = 2001; i <= 2021; i++) {
+            if(song['rankings'][i - 2001]) numberOfSongsByYear[i - 2001]++
+          }
         }
       }
-
+      else {
+        for (let album of this.currentlySelectedListItem['data']['albums']) {
+          for (let song of album['songs']) {
+            for (let i:number = 2001; i <= 2021; i++) {
+              if(song['rankings'][i - 2001]) numberOfSongsByYear[i - 2001]++
+            }
+          }
+        }
+      }
 
       if (this.lineChartOptions) {
         this.lineChartOptions.scales = {
@@ -165,7 +176,7 @@ export class MainPageComponent implements OnInit {
         datasets: [
           {
             data: numberOfSongsByYear,
-            label: 'Songs Ranked',
+            label: 'Songs Ranked by Year',
             backgroundColor: 'rgba(148,159,177,0.2)',
             borderColor: 'rgba(148,159,177,1)',
             pointBackgroundColor: 'rgba(148,159,177,1)',
@@ -196,14 +207,13 @@ export class MainPageComponent implements OnInit {
     //Since album and artist share a button, this block makes sure that this button's
     //color gets changed appropriately.
     this.changeDataTypeButtonColor(dataType);
-    if (dataType == 'album' || dataType == 'artist') {
-      if (this.currentDataType == 'album' || this.currentDataType == 'artist') this.changeOrderingButtonColor(-1);
+    if (dataType != 'song') {
+      //album, artist and year data all have access to the same 'Most Songs' button
+      if (this.currentDataType != 'song' && newDataType) this.changeOrderingButtonColor(-1);
     }
 
     this.currentDataType = dataType;
     this.setDescription();
-
-    
 
     //reset the jump to input box
     let jumpToInput = document.getElementById('jump-to') as HTMLInputElement;
@@ -218,6 +228,7 @@ export class MainPageComponent implements OnInit {
       if (dataType == "song") this.currentRankingType = 0; //search for overall rank by default
       else if (dataType == "album") this.currentRankingType = 2;
       else if (dataType == "artist") this.currentRankingType = 3;
+      else this.currentRankingType = 5;
     }
 
     //Get the new data
@@ -291,6 +302,15 @@ export class MainPageComponent implements OnInit {
     let sortDirection = this.rankingsDirections[this.rankingsValue];
     if (this.currentRankingType == 4) sortDirection = this.rankingsDirections[(this.rankingsValue + 1) % 2];
 
+    //Year data is handled a little differently than the other data types
+    if (this.currentDataType== 'year') {
+      this.backendService.getYearData().subscribe(res => {
+        this.data = res; //just copy over the whole array
+        this.sortYearData();
+      })
+      return; //then return from the function
+    }
+
     if (totalPages == 1) {
       //this means we've triggered the infinite scroll event, which requires different logic for scrolling upwards
       //and downwards. The scrollDirection variable indicates which direction we need to grab data in.
@@ -336,6 +356,9 @@ export class MainPageComponent implements OnInit {
       let itemList = event.target as Element;
 
       //console.log(itemList.scrollTop);
+
+      //this function shouldn't do anything for year data
+      if (this.currentDataType == 'year') return;
 
       //we want to set off the next paginated data request when we get close to the
       //bottom of the list so that scrolling seems seemless. To do this we need to
@@ -396,6 +419,7 @@ export class MainPageComponent implements OnInit {
       let albumScoreButton = document.getElementById('album-score-ranking') as HTMLElement;
       let artistScoreButton = document.getElementById('artist-score-ranking') as HTMLElement;
       let mostSongsButton = document.getElementById('most-songs-ranking') as HTMLElement;
+      let yearButton = document.getElementById('year-ranking') as HTMLElement;
 
       if (rankingType == 0) {
         overallButton.classList.replace('nonpressed-button','pressed-button');
@@ -414,11 +438,16 @@ export class MainPageComponent implements OnInit {
         mostSongsButton.classList.replace('pressed-button', 'nonpressed-button');
       }
       else if (rankingType == 4) {
-        //this ranking type is for 'rankedTracks' which can be used for both album and artist
+        //this ranking type is for 'rankedTracks' which can be used for albums, artists and years
         //ranking
         mostSongsButton.classList.replace('nonpressed-button','pressed-button');
         if (this.currentDataType == 'album') albumScoreButton.classList.replace('pressed-button', 'nonpressed-button');
         else if (this.currentDataType == 'artist') artistScoreButton.classList.replace('pressed-button', 'nonpressed-button');
+        else yearButton.classList.replace('pressed-button', 'nonpressed-button');
+      }
+      else if (rankingType == 5) {
+        yearButton.classList.replace('nonpressed-button','pressed-button');
+        mostSongsButton.classList.replace('pressed-button', 'nonpressed-button');
       }
       else {
         //This is just to reset the color of the shared 'most songs' button
@@ -450,6 +479,61 @@ export class MainPageComponent implements OnInit {
       else if (dataType == "artist") artistButton.classList.replace('nonpressed-button','pressed-button');
       else if (dataType == "year") yearButton.classList.replace('nonpressed-button','pressed-button');
     }
+  }
 
+  sortYearData() {
+    //Since there's so little year data when compared to the other data types, we define our own function
+    //for sorting via brute force instead of letting the Paging and Sorting repository do it for us
+    let sortedArray:any[] = [];
+
+    for (let year of this.data) {
+      //go through the entire sortedArray, if we reach the end before placing the current year
+      //then it just gets appended to the back of the sortedArray
+      let placed:boolean = false;
+      for (let i:number = 0; i < sortedArray.length; i++) {
+        if (this.rankingsValue == 0) {
+          //sort in ascending order
+          if (this.currentRankingType == 5) {
+            //we're sorting by year
+            if (year['year'] < sortedArray[i]['year']) {
+              sortedArray.splice(i, 0, year);
+              placed = true;
+              break; //continue to the next item
+            }
+          }
+          else {
+            //we're sorting by total number of songs
+            if (year['rankedTracks'] > sortedArray[i]['rankedTracks']) {
+              sortedArray.splice(i, 0, year);
+              placed = true;
+              break; //continue to the next item
+            }
+          }
+        }
+        else {
+          //sort in descending order
+          if (this.currentRankingType == 5) {
+            //we're sorting by year
+            if (year['year'] > sortedArray[i]['year']) {
+              sortedArray.splice(i, 0, year);
+              placed = true;
+              break; //continue to the next item
+            }
+          }
+          else {
+            //we're sorting by total number of songs
+            if (year['rankedTracks'] < sortedArray[i]['rankedTracks']) {
+              sortedArray.splice(i, 0, year);
+              placed = true;
+              break; //continue to the next item
+            }
+          }
+        }
+      }
+      if (!placed) sortedArray.push(year);
+    }
+
+    this.data = sortedArray;
+    this.listStart = (this.rankingsValue == 0) ? 1 : this.data.length;
   }
 }

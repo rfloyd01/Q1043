@@ -70,4 +70,8 @@ export class BackendServiceService {
   updateArtists(artists:Artist[]):Observable<boolean> {
     return this.http.put<boolean>(this.backendUrl + '/artists/byId', artists);
   }
+
+  getYearData():Observable<any> {
+    return this.http.get<any>(this.backendUrl + '/albums/byYear');
+  }
 }

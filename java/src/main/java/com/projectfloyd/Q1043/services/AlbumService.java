@@ -3,6 +3,7 @@ package com.projectfloyd.Q1043.services;
 import com.projectfloyd.Q1043.models.Album;
 import com.projectfloyd.Q1043.models.Artist;
 import com.projectfloyd.Q1043.models.Song;
+import com.projectfloyd.Q1043.models.Year;
 import com.projectfloyd.Q1043.repo.AlbumDAO;
 import com.projectfloyd.Q1043.repo.SongDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -231,5 +232,31 @@ public class AlbumService {
         }
         else return null; //we can only sort by album score and total tracks
 
+    }
+
+    public ArrayList<Year> getRankedYears() {
+        //get all album data and create a year array from it
+        int earliestYear = 2022, latestYear = 0;
+
+        ArrayList<Album> allAlbums = new ArrayList<>();
+        Iterator<Album> it = albumDAO.findAll().iterator();
+        while (it.hasNext()) {
+            Album album = it.next();
+            allAlbums.add(album);
+
+            if (album.getReleaseYear() < earliestYear) earliestYear = album.getReleaseYear();
+            else if (album.getReleaseYear() > latestYear) latestYear = album.getReleaseYear();
+        }
+
+        //Create an array list that's the same size as our year spread
+        ArrayList<Year> years = new ArrayList<>(latestYear - earliestYear + 1);
+        for (int i = earliestYear; i <= latestYear; i++) years.add(i - earliestYear, new Year(i, 0));
+
+        for (Album album : allAlbums) {
+            Year currentYear = years.get(album.getReleaseYear() - earliestYear);
+            currentYear.setRankedTracks(currentYear.getRankedTracks() + album.getRankedTracks());
+        }
+
+        return years;
     }
 }
