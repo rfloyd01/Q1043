@@ -409,6 +409,16 @@ export class MainPageComponent implements OnInit {
       "If there are two different albums that have 50% of their songs on the list, but the average rank of list songs on the first album is 100 while the second " +
       "album is 300, then the first album should be considered better."
     }
+    else if (this.currentDataType == 'artist') {
+      this.descriptionHeader = "Top Artists";
+      this.descriptionBody = "This list shows all of the different artists that have at least one of their songs appear on the combined song list. The ordering is " + 
+      "the combination of two factors. First, the total number of ranked songs the artist has and second, the quality of those songs."
+    }
+    else {
+      this.descriptionHeader = "Top Years";
+      this.descriptionBody = "This list shows information for the different years where ranked songs were released (not the years that songs were added to the list)." +
+      "This data can be sorted in numerical order by year, as well as in order of which years have the most and least songs."
+    }
   }
 
   changeOrderingButtonColor(rankingType:number) {

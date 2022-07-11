@@ -53,7 +53,7 @@
         <app-song-display class="content-block" *ngIf="currentlySelectedListItem != null && currentDataType == 'song'" [song]="currentlySelectedListItem.data"></app-song-display>
         <app-album-display class="content-block" *ngIf="currentlySelectedListItem != null && currentDataType == 'album'" [album]="currentlySelectedListItem.data"></app-album-display>
         <app-artist-display class="content-block" *ngIf="currentlySelectedListItem != null && currentDataType == 'artist'" [artist]="currentlySelectedListItem.data"></app-artist-display>
-        <div class="flex-item">
+        <div class="flex-item" *ngIf="currentDataType != 'year'">
             <div style="display: block;">
             <canvas baseChart width="800" height="300"
                         [data]="lineChartData"
