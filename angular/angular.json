@@ -13,7 +13,7 @@
           "strict": true
         }
       },
-      "root": "",
+      "root": "https://www.project-floyd.com/Pages/Top_1043/",
       "sourceRoot": "src",
       "prefix": "app",
       "architect": {

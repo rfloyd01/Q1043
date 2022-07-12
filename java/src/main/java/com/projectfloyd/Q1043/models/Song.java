@@ -63,8 +63,8 @@ public class Song {
     //overall data
     private double averageScore;
     private double overallScore;
-    private int averageRank;
-    private int overallRank;
+    //private int averageRank;
+    //private int overallRank;
 
     //notes that are used for storing anything interesting about the song, or the data itself
     private String notes;
@@ -73,7 +73,7 @@ public class Song {
     public Song() {
     }
 
-    public Song(int id, String title, String artist, Album album, String spotifyURI, int popularity, int[] rankings, double averageScore, double overallScore, int averageRank, int overallRank, String notes) {
+    public Song(int id, String title, String artist, Album album, String spotifyURI, int popularity, int[] rankings, double averageScore, double overallScore, String notes) {
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -83,8 +83,8 @@ public class Song {
         this.rankings = rankings;
         this.averageScore = averageScore;
         this.overallScore = overallScore;
-        this.averageRank = averageRank;
-        this.overallRank = overallRank;
+        //this.averageRank = averageRank;
+        //this.overallRank = overallRank;
         this.notes = notes;
 
         convertRankingsArray();
@@ -397,21 +397,21 @@ public class Song {
         this.overallScore = overallScore;
     }
 
-    public int getAverageRank() {
-        return averageRank;
-    }
-
-    public void setAverageRank(int averageRank) {
-        this.averageRank = averageRank;
-    }
-
-    public int getOverallRank() {
-        return overallRank;
-    }
-
-    public void setOverallRank(int overallRank) {
-        this.overallRank = overallRank;
-    }
+//    public int getAverageRank() {
+//        return averageRank;
+//    }
+//
+//    public void setAverageRank(int averageRank) {
+//        this.averageRank = averageRank;
+//    }
+//
+//    public int getOverallRank() {
+//        return overallRank;
+//    }
+//
+//    public void setOverallRank(int overallRank) {
+//        this.overallRank = overallRank;
+//    }
 
     public String getNotes() { return notes; }
 
@@ -444,9 +444,10 @@ public class Song {
                 ", rankings=" + Arrays.toString(rankings) +
                 ", averageScore=" + averageScore +
                 ", overallScore=" + overallScore +
-                ", averageRank=" + averageRank +
-                ", overallRank=" + overallRank +
-                ", notes=" + notes +
+                //", averageRank=" + averageRank +
+                //", overallRank=" + overallRank +
+                ", notes='" + notes + '\'' +
                 '}';
     }
+
 }
