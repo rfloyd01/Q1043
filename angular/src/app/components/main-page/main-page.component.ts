@@ -33,7 +33,7 @@ export class MainPageComponent implements OnInit {
 
   //Pagination variables
   pageNumber:number = 0; //we load a few pages at a time, this number represents the lowest page we currently have
-  pageSize:number = 20;
+  pageSize:number = 15;
   totalListSize:number = 0;
   totalPages:number = 0;
   paginationPadding:number = this.pageSize / 2; //get next data set when we're 10 items away from bottom
