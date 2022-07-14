@@ -4,22 +4,22 @@ import com.projectfloyd.Q1043.models.Album;
 import com.projectfloyd.Q1043.models.Song;
 import com.projectfloyd.Q1043.models.Year;
 import com.projectfloyd.Q1043.services.AlbumService;
-import org.apache.coyote.Response;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContextBuilder;
+//import org.apache.coyote.Response;
+//import org.apache.http.client.HttpClient;
+//import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+//import org.apache.http.impl.client.HttpClients;
+//import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+//import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+//import org.springframework.web.client.RestTemplate;
 
-import javax.net.ssl.SSLContext;
+//import javax.net.ssl.SSLContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,19 +35,19 @@ public class AlbumController {
         this.albumService = albumService;
     }
 
-    @Value("${trust.store}")
-    private Resource trustStore;
+//    @Value("${trust.store}")
+//    private Resource trustStore;
+//
+//    @Value("${trust.store.password}")
+//    private String trustStorePassword;
 
-    @Value("${trust.store.password}")
-    private String trustStorePassword;
-
-    private RestTemplate restTemplate() throws Exception {
-        SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray()).build();
-        SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext);
-        HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
-        return new RestTemplate(factory);
-    }
+//    private RestTemplate restTemplate() throws Exception {
+//        SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray()).build();
+//        SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext);
+//        HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
+//        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+//        return new RestTemplate(factory);
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Album> findAlbumById(@PathVariable("id") int id) {

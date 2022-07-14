@@ -12,7 +12,7 @@ export class BackendServiceService {
 
   //we can only access the API endpoints if we're logged in as an authenticated user
   //backendUrl:string = 'http://localhost:8083'
-  backendUrl:string = 'http://3.236.12.81:8083'
+  backendUrl:string = 'https://3.236.12.81:443'
 
   constructor(private http:HttpClient) {
   }
