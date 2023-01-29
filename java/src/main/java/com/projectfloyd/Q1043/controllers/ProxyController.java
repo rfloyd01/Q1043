@@ -1,6 +1,7 @@
 package com.projectfloyd.Q1043.controllers;
 
 
+import com.projectfloyd.Q1043.models.PlainText;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -24,21 +25,23 @@ public class ProxyController {
 
         headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_HTML);
+        headers.set("User-Agent", "project-floyd");
     }
 
     @GetMapping("/test")
-    public ResponseEntity<String> testProxyController() {
+    public ResponseEntity<PlainText> testProxyController() {
         //this is just to see if the controller is working as intented
-        return ResponseEntity.status(HttpStatus.OK).body("Testing Testing...");
+        PlainText tester = new PlainText("Testing testing");
+        return ResponseEntity.status(HttpStatus.OK).body(tester);
     }
 
     @GetMapping()
-    public ResponseEntity<String> getRawHTML(@RequestParam String url) {
+    public ResponseEntity<PlainText> getRawHTML(@RequestParam String url) {
         //This method is used to extract the raw HTML from the website given in the request parameter.
         //It returns the HTML in text form where it can be parsed on the front end depending on the
         //application. Parsing isn't done here as websites all format their HTML very differently so backend
         //services would need to be made on a URL by URL basis.
-        log.log(Level.WARNING, "Testing out java.util.logging...");
-        return restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+        return ResponseEntity.status(HttpStatus.OK).body(new PlainText(response.getBody()));
     }
 }
