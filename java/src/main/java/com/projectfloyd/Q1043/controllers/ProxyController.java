@@ -1,23 +1,22 @@
 package com.projectfloyd.Q1043.controllers;
 
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/proxy-client")
+@CrossOrigin
 public class ProxyController {
     private RestTemplate restTemplate;
     private HttpHeaders headers;
 
-    private org.slf4j.Logger log = LoggerFactory.getLogger(ProxyController.class);
+    private Logger log = Logger.getLogger(ProxyController.class.getName());
 
     @Autowired
     public ProxyController(RestTemplate restTemplate) {
@@ -39,7 +38,7 @@ public class ProxyController {
         //It returns the HTML in text form where it can be parsed on the front end depending on the
         //application. Parsing isn't done here as websites all format their HTML very differently so backend
         //services would need to be made on a URL by URL basis.
-        log.warn("Testing to see if logs with warn level appear in Jenkins...");
+        log.log(Level.WARNING, "Testing out java.util.logging...");
         return restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
     }
 }
