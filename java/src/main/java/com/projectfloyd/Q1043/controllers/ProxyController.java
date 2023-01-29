@@ -24,8 +24,10 @@ public class ProxyController {
         this.restTemplate = restTemplate;
 
         headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_HTML);
-        headers.set("User-Agent", "project-floyd");
+        headers.set("Accept", "application/json, text/javascript, */*; q=0.01");
+        headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.61");
+        headers.set("Accept-Encoding", "gzip, deflate, br");
+        headers.set("Accept-Encoding", "en-US,en;q=0.9");
     }
 
     @GetMapping("/test")
@@ -41,7 +43,12 @@ public class ProxyController {
         //It returns the HTML in text form where it can be parsed on the front end depending on the
         //application. Parsing isn't done here as websites all format their HTML very differently so backend
         //services would need to be made on a URL by URL basis.
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+
+        HttpEntity<String> ent = new HttpEntity<>(headers);
+
+        //log.log(Level.INFO, ent.getHeaders().toString());
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, ent, String.class);
         return ResponseEntity.status(HttpStatus.OK).body(new PlainText(response.getBody()));
     }
 }
