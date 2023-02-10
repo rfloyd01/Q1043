@@ -44,6 +44,9 @@ public class ProxyController {
         //application. Parsing isn't done here as websites all format their HTML very differently so backend
         //services would need to be made on a URL by URL basis.
 
+        System.out.println("Scraping URL:");
+        System.out.println(url);
+
         HttpEntity<String> ent = new HttpEntity<>(headers);
 
         //log.log(Level.INFO, ent.getHeaders().toString());
