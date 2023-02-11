@@ -120,6 +120,7 @@ public class CoinService {
 
                     //The current coin beats our current best match so go ahead and update the estimated value
                     coin.setRedbookValue(getCoinValue(coin.getGrade(), matchingCoins.get(i)));
+                    //System.out.println(matchingCoins.get(i).getCoinValues());
 
                     //Just for reference, also set the mintage if it's available
                     if (matchingCoins.get(i).getMintage() != null) coin.setMintage(matchingCoins.get(i).getMintage());
@@ -156,7 +157,10 @@ public class CoinService {
 
         variant.replaceAll("[^0-9a-z]", "");
         redbookVariant.replaceAll("[^0-9a-z]", "");
-        if (variant.equals(redbookVariant)) return 100;
+        if (variant.equals(redbookVariant)) {
+            System.out.println("Comparison score for the following strings: " + variant + ", " + redbookVariant + " = 100");
+            return 100;
+        }
 
         //The way this algorithm works is by simply comparing the total number of letters and numbers that the
         //two strings have in common. It doesn't care about the order of the letters, only what the actual letters
@@ -179,11 +183,22 @@ public class CoinService {
         //for words that are an exact match)
         int shorterLength = Math.min(variant.length(), redbookVariant.length());
         int longerLength = Math.max(variant.length(), redbookVariant.length());
+        int nonZeroCharacters = 0;
         double weightedAverage = 0;
 
         //convert all zeros to ones to ensure that no division by zero occurs. This technically throws off the
         //percentages a bit, but since it happens for all letters it should be fine.
-        for (int i = 0; i < 128; i++) weightedAverage += shorterLength * (1.0 / 128.0) * ((double) ++variantCharacters[i] / ++redbookCharacters[i]);
+        for (int i = 0; i < 128; i++) {
+            int lessCharacters = (variantCharacters[i] < redbookCharacters[i]) ? variantCharacters[i] : redbookCharacters[i];
+            int moreCharacters = (lessCharacters == variantCharacters[i]) ? redbookCharacters[i] : variantCharacters[i];
+            if (moreCharacters == 0) continue;
+            nonZeroCharacters++;
+
+            weightedAverage += ((double) lessCharacters / moreCharacters);
+        }
+        weightedAverage *= ((double) shorterLength / nonZeroCharacters);
+
+        System.out.println("Comparison score for the following strings: " + variant + ", " + redbookVariant + " = " + (int)(99 * (weightedAverage / longerLength)));
 
         return (int)(99 * (weightedAverage / longerLength));
     }

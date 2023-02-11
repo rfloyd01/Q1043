@@ -43,7 +43,8 @@ public class CoinController {
     public ResponseEntity<List<FrontendCoin>> getCoinValues(@RequestBody List<FrontendCoin> coins, @RequestParam String... types) {
         //Since Angular doesn't support sending a body in a get request, instead use a post request
         //but don't actually alter anything in the database.
-        System.out.println("Searching for coins of type: " + Arrays.toString(types));
+        //System.out.println("Searching for coins of type: " + Arrays.toString(types));
+
         return ResponseEntity.status(200).body(this.coinService.getCoinValues(coins, types));
     }
 

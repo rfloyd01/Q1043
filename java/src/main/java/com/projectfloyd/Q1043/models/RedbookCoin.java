@@ -33,7 +33,10 @@ public class RedbookCoin {
     private Integer xf_40;
     private Integer au_50;
     private Integer ms_60;
+    private Integer ms_63;
+    private Integer ms_65;
     private Integer pf_63;
+    private Integer pf_65;
 
     @Transient
     private ArrayList<CoinValue> coinValues;
@@ -45,7 +48,7 @@ public class RedbookCoin {
     public RedbookCoin() {
     }
 
-    public RedbookCoin(int coin_id, String coinType, String coinName, Integer manufacture_year, Integer mintage, Integer ag_3, Integer g_4, Integer vg_8, Integer f_12, Integer vf_20, Integer xf_40, Integer au_50, Integer ms_60, Integer pf_63, String variant, String notes, String mint) {
+    public RedbookCoin(int coin_id, String coinType, String coinName, Integer manufacture_year, Integer mintage, Integer ag_3, Integer g_4, Integer vg_8, Integer f_12, Integer vf_20, Integer xf_40, Integer au_50, Integer ms_60, Integer ms_63, Integer ms_65, Integer pf_63, Integer pf_65, String variant, String notes, String mint) {
         this.coin_id = coin_id;
         this.coinType = coinType;
         this.coinName = coinName;
@@ -59,7 +62,10 @@ public class RedbookCoin {
         this.xf_40 = xf_40;
         this.au_50 = au_50;
         this.ms_60 = ms_60;
+        this.ms_63 = ms_63;
+        this.ms_65 = ms_65;
         this.pf_63 = pf_63;
+        this.pf_65 = pf_65;
         this.variant = variant;
         this.notes = notes;
         this.mint = mint;
@@ -99,11 +105,24 @@ public class RedbookCoin {
         if (ms_60 == null) ms_60 = 0;
         else coinValues.add(new CoinValue(60, ms_60));
 
-        if (pf_63 == null) pf_63 = 0;
-        else coinValues.add(new CoinValue(63, pf_63));
+        if (ms_63 == null) ms_63 = 0;
+        else coinValues.add(new CoinValue(63, ms_63));
 
-        //Add in a value for PF-70, the highest grade a coin can get. Unlike the value for a 0 graded coin
-        //(which is just 0), the PF-70 value is much more subjective. Depending on the coin, it can be as
+        if (ms_65 == null) ms_65 = 0;
+        else coinValues.add(new CoinValue(65, ms_65));
+
+        //Proof values are a little weird in that they have the
+        //same numbers of MS coins. To make things easier, I'm going
+        //to say that a proof coin is 11 points higher then it's MS
+        //equivalent. The maximum coin grade in this case is pf-70 = 81
+        if (pf_63 == null) pf_63 = 0;
+        else coinValues.add(new CoinValue(74, pf_63));
+
+        if (pf_65 == null) pf_65 = 0;
+        else coinValues.add(new CoinValue(76, pf_65));
+
+        //Add in a value for MS-70, the highest grade any coin can get (proof strikes didn't exist until the mid-1800's).
+        //Unlike the value for a 0 graded coin the MS-70 value is much more subjective. Depending on the coin, it can be as
         //low as $30.00, or as high as $1,500,000.00. Because of this, a separate function is defined to
         //help figure out a reasonable value.
         coinValues.add(new CoinValue(70, this.calculatePF70Value()));
@@ -238,12 +257,36 @@ public class RedbookCoin {
         this.ms_60 = ms_60;
     }
 
+    public Integer getMs_63() {
+        return ms_63;
+    }
+
+    public void setMs_63(Integer ms_63) {
+        this.ms_63 = ms_63;
+    }
+
+    public Integer getMs_65() {
+        return ms_65;
+    }
+
+    public void setMs_65(Integer ms_65) {
+        this.ms_65 = ms_65;
+    }
+
     public Integer getPf_63() {
         return pf_63;
     }
 
     public void setPf_63(Integer pf_63) {
         this.pf_63 = pf_63;
+    }
+
+    public Integer getPf_65() {
+        return pf_65;
+    }
+
+    public void setPf_65(Integer pf_65) {
+        this.pf_65 = pf_65;
     }
 
     public String getVariant() {
@@ -275,12 +318,12 @@ public class RedbookCoin {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RedbookCoin that = (RedbookCoin) o;
-        return coin_id == that.coin_id && Objects.equals(coinType, that.coinType) && Objects.equals(coinName, that.coinName) && Objects.equals(manufacture_year, that.manufacture_year) && Objects.equals(mintage, that.mintage) && Objects.equals(ag_3, that.ag_3) && Objects.equals(g_4, that.g_4) && Objects.equals(vg_8, that.vg_8) && Objects.equals(f_12, that.f_12) && Objects.equals(vf_20, that.vf_20) && Objects.equals(xf_40, that.xf_40) && Objects.equals(au_50, that.au_50) && Objects.equals(ms_60, that.ms_60) && Objects.equals(pf_63, that.pf_63) && Objects.equals(variant, that.variant) && Objects.equals(notes, that.notes) && Objects.equals(mint, that.mint);
+        return coin_id == that.coin_id && Objects.equals(coinType, that.coinType) && Objects.equals(coinName, that.coinName) && Objects.equals(manufacture_year, that.manufacture_year) && Objects.equals(mintage, that.mintage) && Objects.equals(ag_3, that.ag_3) && Objects.equals(g_4, that.g_4) && Objects.equals(vg_8, that.vg_8) && Objects.equals(f_12, that.f_12) && Objects.equals(vf_20, that.vf_20) && Objects.equals(xf_40, that.xf_40) && Objects.equals(au_50, that.au_50) && Objects.equals(ms_60, that.ms_60) && Objects.equals(ms_63, that.ms_63) && Objects.equals(ms_65, that.ms_65) && Objects.equals(pf_63, that.pf_63) && Objects.equals(pf_65, that.pf_65) && Objects.equals(variant, that.variant) && Objects.equals(notes, that.notes) && Objects.equals(mint, that.mint);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(coin_id, coinType, coinName, manufacture_year, mintage, ag_3, g_4, vg_8, f_12, vf_20, xf_40, au_50, ms_60, pf_63, variant, notes, mint);
+        return Objects.hash(coin_id, coinType, coinName, manufacture_year, mintage, ag_3, g_4, vg_8, f_12, vf_20, xf_40, au_50, ms_60, ms_63, ms_65, pf_63, pf_65, variant, notes, mint);
     }
 
     @Override
@@ -299,10 +342,14 @@ public class RedbookCoin {
                 ", xf_40=" + xf_40 +
                 ", au_50=" + au_50 +
                 ", ms_60=" + ms_60 +
+                ", ms_63=" + ms_63 +
+                ", ms_65=" + ms_65 +
                 ", pf_63=" + pf_63 +
+                ", pf_65=" + pf_65 +
                 ", variant='" + variant + '\'' +
                 ", notes='" + notes + '\'' +
                 ", mint='" + mint + '\'' +
                 '}';
     }
+
 }

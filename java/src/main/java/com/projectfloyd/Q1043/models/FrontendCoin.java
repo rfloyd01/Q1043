@@ -1,5 +1,6 @@
 package com.projectfloyd.Q1043.models;
 
+import javax.persistence.Transient;
 import java.util.Objects;
 
 public class FrontendCoin {
@@ -17,11 +18,13 @@ public class FrontendCoin {
     private Integer redbookValue; //should consider changing this to a float or double
     private Boolean details;
     private String mint;
+    private String greatCollectionsNameString;
+    private String imageUrl;
 
     public FrontendCoin() {
     }
 
-    public FrontendCoin(String coinType, String coinName, Integer manufactureYear, Integer mintage, Integer grade, String variant, Double currentBid, Integer redbookValue, Boolean details, String mint) {
+    public FrontendCoin(String coinType, String coinName, Integer manufactureYear, Integer mintage, Integer grade, String variant, Double currentBid, Integer redbookValue, Boolean details, String mint, String greatCollectionsNameString, String imageUrl) {
         this.coinType = coinType;
         this.coinName = coinName;
         this.manufactureYear = manufactureYear;
@@ -32,6 +35,8 @@ public class FrontendCoin {
         this.redbookValue = redbookValue;
         this.details = details;
         this.mint = mint;
+        this.greatCollectionsNameString = greatCollectionsNameString;
+        this.imageUrl = imageUrl;
     }
 
     public String getCoinType() {
@@ -114,17 +119,33 @@ public class FrontendCoin {
         this.mint = mint;
     }
 
+    public String getGreatCollectionsNameString() {
+        return greatCollectionsNameString;
+    }
+
+    public void setGreatCollectionsNameString(String greatCollectionsNameString) {
+        this.greatCollectionsNameString = greatCollectionsNameString;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FrontendCoin that = (FrontendCoin) o;
-        return Objects.equals(coinType, that.coinType) && Objects.equals(coinName, that.coinName) && Objects.equals(manufactureYear, that.manufactureYear) && Objects.equals(mintage, that.mintage) && Objects.equals(grade, that.grade) && Objects.equals(variant, that.variant) && Objects.equals(currentBid, that.currentBid) && Objects.equals(redbookValue, that.redbookValue) && Objects.equals(details, that.details) && Objects.equals(mint, that.mint);
+        return Objects.equals(coinType, that.coinType) && Objects.equals(coinName, that.coinName) && Objects.equals(manufactureYear, that.manufactureYear) && Objects.equals(mintage, that.mintage) && Objects.equals(grade, that.grade) && Objects.equals(variant, that.variant) && Objects.equals(currentBid, that.currentBid) && Objects.equals(redbookValue, that.redbookValue) && Objects.equals(details, that.details) && Objects.equals(mint, that.mint) && Objects.equals(greatCollectionsNameString, that.greatCollectionsNameString) && Objects.equals(imageUrl, that.imageUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(coinType, coinName, manufactureYear, mintage, grade, variant, currentBid, redbookValue, details, mint);
+        return Objects.hash(coinType, coinName, manufactureYear, mintage, grade, variant, currentBid, redbookValue, details, mint, greatCollectionsNameString, imageUrl);
     }
 
     @Override
@@ -140,6 +161,8 @@ public class FrontendCoin {
                 ", redbookValue=" + redbookValue +
                 ", details=" + details +
                 ", mint='" + mint + '\'' +
+                ", greatCollectionsNameString='" + greatCollectionsNameString + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 }
