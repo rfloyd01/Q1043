@@ -6,12 +6,12 @@ public class CoinValue {
     //acts like a struct, holds a numerical grade for a coin (i.e. G-4, VF-20, etc.)
     //and its corresponding red book value
     public int grade;
-    public int value;
+    public double value;
 
     public CoinValue() {
     }
 
-    public CoinValue(int grade, int value) {
+    public CoinValue(int grade, double value) {
         this.grade = grade;
         this.value = value;
     }

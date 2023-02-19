@@ -7,6 +7,7 @@ import com.projectfloyd.Q1043.repo.RedbookCoinDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Service
@@ -102,9 +103,10 @@ public class CoinService {
                 for (int i = 0; i < matchingCoins.size(); i++) {
                     //need to account for potential null values in the database
                     String redbookVariant = matchingCoins.get(i).getVariant() == null ? "" : matchingCoins.get(i).getVariant();
-                    String redbookMint = matchingCoins.get(i).getMint() == null ? "" : matchingCoins.get(i).getVariant();
+                    String redbookMint = matchingCoins.get(i).getMint() == null ? "" : matchingCoins.get(i).getMint();
 
                     if (!coin.getManufactureYear().equals(matchingCoins.get(i).getManufacture_year())) continue; //year can't be null
+                    //System.out.println("comparing the following two coins: " + matchingCoins.get(i) + ", " + coin);
                     if (!coin.getMint().equals(redbookMint)) continue;
                     found = true; //we found at least one matching coin so set the found variable to true
 
@@ -131,13 +133,13 @@ public class CoinService {
                 //for whatever reason we weren't able to match the coin, most likely because the variant didn't
                 //turn up anything, for now just set the value to -1 to indicate in the front end that the value
                 //wasn't found
-                coin.setRedbookValue(-1);
+                coin.setRedbookValue(-1.0);
             }
             else {
                 //we found a matching coin, see if our current Great Collections coin is in "details" condition or not
                 //and update the price accordingly
                 //if the coin is a details coin, then multiply its value by the detail multiplier
-                if (coin.getDetails()) coin.setRedbookValue((int)(coin.getRedbookValue() * this.detailsMultiplier));
+                if (coin.getDetails()) coin.setRedbookValue(coin.getRedbookValue() * this.detailsMultiplier);
             }
         }
 
@@ -157,10 +159,7 @@ public class CoinService {
 
         variant.replaceAll("[^0-9a-z]", "");
         redbookVariant.replaceAll("[^0-9a-z]", "");
-        if (variant.equals(redbookVariant)) {
-            System.out.println("Comparison score for the following strings: " + variant + ", " + redbookVariant + " = 100");
-            return 100;
-        }
+        if (variant.equals(redbookVariant))  return 100;
 
         //The way this algorithm works is by simply comparing the total number of letters and numbers that the
         //two strings have in common. It doesn't care about the order of the letters, only what the actual letters
@@ -198,16 +197,16 @@ public class CoinService {
         }
         weightedAverage *= ((double) shorterLength / nonZeroCharacters);
 
-        System.out.println("Comparison score for the following strings: " + variant + ", " + redbookVariant + " = " + (int)(99 * (weightedAverage / longerLength)));
+        //System.out.println("Comparison score for the following strings: " + variant + ", " + redbookVariant + " = " + (int)(99 * (weightedAverage / longerLength)));
 
         return (int)(99 * (weightedAverage / longerLength));
     }
 
-    private int getCoinValue(int grade, RedbookCoin coin) {
+    private double getCoinValue(int grade, RedbookCoin coin) {
         //Looking at the current grade for the coin, a reasonable value for it is calculated with linear
         //extrapolation. The closest known grades, both above and below the coin grade are used.
 
-        Integer lower_val = 0, upper_val = 0;
+        Double lower_val = 0.0, upper_val = 0.0;
         double lower_grade = 0, upper_grade = 0;
 
         if (coin.getCoinValues() == null) coin.setValueArray();
@@ -228,6 +227,32 @@ public class CoinService {
             }
         }
 
+        //Check to make sure that upper_val is greater than lower_val. There are certain
+        //coins where proof versions are actually worth less than the non-proof versions
+        //(I'm not entirely sure why this is the case, maybe it's just very rare to find
+        //a circulated coin in great shape). If not, we need to extrapolate the value using
+        //two lower values.
+        if (upper_val <= lower_val) {
+            upper_val = lower_val;
+            upper_grade = lower_grade;
+            for (int i = coinValues.size() - 1; i >= 0; i--) {
+                int currentGrade = coinValues.get(i).grade;
+                if (currentGrade < upper_grade) {
+                    lower_grade = currentGrade;
+                    lower_val = coinValues.get(i).value;
+                    break;
+                }
+            }
+
+            //compare the difference in value between the upper and lower grade and extend this
+            //to the actual coin
+            if (upper_grade == lower_grade) return -1; //this scenario shouldn't happen but will protect against division by 0
+            else {
+                double inc = (upper_val - lower_val) / (upper_grade - lower_grade);
+                return upper_val + inc * (grade - upper_grade);
+            }
+        }
+
         //return a weighted average of the lower and upper values of the coin
         double weighted_average;
         if (upper_grade == lower_grade) {
@@ -236,6 +261,6 @@ public class CoinService {
         }
         else weighted_average = (upper_grade - grade) / (upper_grade - lower_grade) * lower_val + (grade - lower_grade) / (upper_grade - lower_grade) * upper_val;
 
-        return (int)weighted_average; //round down cents and return a whole number
+        return weighted_average; //round down cents and return a whole number
     }
 }

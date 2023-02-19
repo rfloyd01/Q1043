@@ -23,20 +23,20 @@ public class RedbookCoin {
     @Column(nullable = false)
     private Integer manufacture_year;
 
-    private Integer mintage;
+    private Long mintage; //the mintage on some coins gets as high as 7,000,000,000 so a long is needed
 
-    private Integer ag_3;
-    private Integer g_4;
-    private Integer vg_8;
-    private Integer f_12;
-    private Integer vf_20;
-    private Integer xf_40;
-    private Integer au_50;
-    private Integer ms_60;
-    private Integer ms_63;
-    private Integer ms_65;
-    private Integer pf_63;
-    private Integer pf_65;
+    private Double ag_3;
+    private Double g_4;
+    private Double vg_8;
+    private Double f_12;
+    private Double vf_20;
+    private Double xf_40;
+    private Double au_50;
+    private Double ms_60;
+    private Double ms_63;
+    private Double ms_65;
+    private Double pf_63;
+    private Double pf_65;
 
     @Transient
     private ArrayList<CoinValue> coinValues;
@@ -48,7 +48,7 @@ public class RedbookCoin {
     public RedbookCoin() {
     }
 
-    public RedbookCoin(int coin_id, String coinType, String coinName, Integer manufacture_year, Integer mintage, Integer ag_3, Integer g_4, Integer vg_8, Integer f_12, Integer vf_20, Integer xf_40, Integer au_50, Integer ms_60, Integer ms_63, Integer ms_65, Integer pf_63, Integer pf_65, String variant, String notes, String mint) {
+    public RedbookCoin(int coin_id, String coinType, String coinName, Integer manufacture_year, Long mintage, Double ag_3, Double g_4, Double vg_8, Double f_12, Double vf_20, Double xf_40, Double au_50, Double ms_60, Double ms_63, Double ms_65, Double pf_63, Double pf_65, String variant, String notes, String mint) {
         this.coin_id = coin_id;
         this.coinType = coinType;
         this.coinName = coinName;
@@ -81,44 +81,44 @@ public class RedbookCoin {
         //for extrapolation
         coinValues.add(new CoinValue(0, 0));
 
-        if (ag_3 == null) ag_3 = 0;
+        if (ag_3 == null) ag_3 = 0.0;
         else coinValues.add(new CoinValue(3, ag_3));
 
-        if (g_4 == null) g_4 = 0;
+        if (g_4 == null) g_4 = 0.0;
         else coinValues.add(new CoinValue(4, g_4));
 
-        if (vg_8 == null) vg_8= 0;
+        if (vg_8 == null) vg_8= 0.0;
         else coinValues.add(new CoinValue(8, vg_8));
 
-        if (f_12 == null) f_12 = 0;
+        if (f_12 == null) f_12 = 0.0;
         else coinValues.add(new CoinValue(12, f_12));
 
-        if (vf_20 == null) vf_20 = 0;
+        if (vf_20 == null) vf_20 = 0.0;
         else coinValues.add(new CoinValue(20, vf_20));
 
-        if (xf_40 == null) xf_40 = 0;
+        if (xf_40 == null) xf_40 = 0.0;
         else coinValues.add(new CoinValue(40, xf_40));
 
-        if (au_50 == null) au_50 = 0;
+        if (au_50 == null) au_50 = 0.0;
         else coinValues.add(new CoinValue(50, au_50));
 
-        if (ms_60 == null) ms_60 = 0;
+        if (ms_60 == null) ms_60 = 0.0;
         else coinValues.add(new CoinValue(60, ms_60));
 
-        if (ms_63 == null) ms_63 = 0;
+        if (ms_63 == null) ms_63 = 0.0;
         else coinValues.add(new CoinValue(63, ms_63));
 
-        if (ms_65 == null) ms_65 = 0;
+        if (ms_65 == null) ms_65 = 0.0;
         else coinValues.add(new CoinValue(65, ms_65));
 
         //Proof values are a little weird in that they have the
         //same numbers of MS coins. To make things easier, I'm going
         //to say that a proof coin is 11 points higher then it's MS
         //equivalent. The maximum coin grade in this case is pf-70 = 81
-        if (pf_63 == null) pf_63 = 0;
+        if (pf_63 == null) pf_63 = 0.0;
         else coinValues.add(new CoinValue(74, pf_63));
 
-        if (pf_65 == null) pf_65 = 0;
+        if (pf_65 == null) pf_65 = 0.0;
         else coinValues.add(new CoinValue(76, pf_65));
 
         //Add in a value for MS-70, the highest grade any coin can get (proof strikes didn't exist until the mid-1800's).
@@ -185,107 +185,105 @@ public class RedbookCoin {
         this.manufacture_year = manufacture_year;
     }
 
-    public Integer getMintage() {
+    public Long getMintage() {
         return mintage;
     }
 
-    public void setMintage(Integer mintage) {
-        this.mintage = mintage;
-    }
+    public void setMintage(Long mintage) { this.mintage = mintage; }
 
-    public Integer getAg_3() {
+    public Double getAg_3() {
         return ag_3;
     }
 
-    public void setAg_3(Integer ag_3) {
+    public void setAg_3(Double ag_3) {
         this.ag_3 = ag_3;
     }
 
-    public Integer getG_4() {
+    public Double getG_4() {
         return g_4;
     }
 
-    public void setG_4(Integer g_4) {
+    public void setG_4(Double g_4) {
         this.g_4 = g_4;
     }
 
-    public Integer getVg_8() {
+    public Double getVg_8() {
         return vg_8;
     }
 
-    public void setVg_8(Integer vg_8) {
+    public void setVg_8(Double vg_8) {
         this.vg_8 = vg_8;
     }
 
-    public Integer getF_12() {
+    public Double getF_12() {
         return f_12;
     }
 
-    public void setF_12(Integer f_12) {
+    public void setF_12(Double f_12) {
         this.f_12 = f_12;
     }
 
-    public Integer getVf_20() {
+    public Double getVf_20() {
         return vf_20;
     }
 
-    public void setVf_20(Integer vf_20) {
+    public void setVf_20(Double vf_20) {
         this.vf_20 = vf_20;
     }
 
-    public Integer getXf_40() {
+    public Double getXf_40() {
         return xf_40;
     }
 
-    public void setXf_40(Integer xf_40) {
+    public void setXf_40(Double xf_40) {
         this.xf_40 = xf_40;
     }
 
-    public Integer getAu_50() {
+    public Double getAu_50() {
         return au_50;
     }
 
-    public void setAu_50(Integer au_50) {
+    public void setAu_50(Double au_50) {
         this.au_50 = au_50;
     }
 
-    public Integer getMs_60() {
+    public Double getMs_60() {
         return ms_60;
     }
 
-    public void setMs_60(Integer ms_60) {
+    public void setMs_60(Double ms_60) {
         this.ms_60 = ms_60;
     }
 
-    public Integer getMs_63() {
+    public Double getMs_63() {
         return ms_63;
     }
 
-    public void setMs_63(Integer ms_63) {
+    public void setMs_63(Double ms_63) {
         this.ms_63 = ms_63;
     }
 
-    public Integer getMs_65() {
+    public Double getMs_65() {
         return ms_65;
     }
 
-    public void setMs_65(Integer ms_65) {
+    public void setMs_65(Double ms_65) {
         this.ms_65 = ms_65;
     }
 
-    public Integer getPf_63() {
+    public Double getPf_63() {
         return pf_63;
     }
 
-    public void setPf_63(Integer pf_63) {
+    public void setPf_63(Double pf_63) {
         this.pf_63 = pf_63;
     }
 
-    public Integer getPf_65() {
+    public Double getPf_65() {
         return pf_65;
     }
 
-    public void setPf_65(Integer pf_65) {
+    public void setPf_65(Double pf_65) {
         this.pf_65 = pf_65;
     }
 

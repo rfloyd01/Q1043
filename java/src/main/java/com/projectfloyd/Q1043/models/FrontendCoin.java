@@ -11,11 +11,11 @@ public class FrontendCoin {
     private String coinType;
     private String coinName;
     private Integer manufactureYear;
-    private Integer mintage;
+    private Long mintage;
     private Integer grade;
     private String variant;
     private Double currentBid;
-    private Integer redbookValue; //should consider changing this to a float or double
+    private Double redbookValue; //should consider changing this to a float or double
     private Boolean details;
     private String mint;
     private String greatCollectionsNameString;
@@ -24,7 +24,7 @@ public class FrontendCoin {
     public FrontendCoin() {
     }
 
-    public FrontendCoin(String coinType, String coinName, Integer manufactureYear, Integer mintage, Integer grade, String variant, Double currentBid, Integer redbookValue, Boolean details, String mint, String greatCollectionsNameString, String imageUrl) {
+    public FrontendCoin(String coinType, String coinName, Integer manufactureYear, Long mintage, Integer grade, String variant, Double currentBid, Double redbookValue, Boolean details, String mint, String greatCollectionsNameString, String imageUrl) {
         this.coinType = coinType;
         this.coinName = coinName;
         this.manufactureYear = manufactureYear;
@@ -63,11 +63,11 @@ public class FrontendCoin {
         this.manufactureYear = manufactureYear;
     }
 
-    public Integer getMintage() {
+    public Long getMintage() {
         return mintage;
     }
 
-    public void setMintage(Integer mintage) {
+    public void setMintage(Long mintage) {
         this.mintage = mintage;
     }
 
@@ -95,11 +95,11 @@ public class FrontendCoin {
         this.currentBid = currentBid;
     }
 
-    public Integer getRedbookValue() {
+    public Double getRedbookValue() {
         return redbookValue;
     }
 
-    public void setRedbookValue(Integer redbookValue) {
+    public void setRedbookValue(Double redbookValue) {
         this.redbookValue = redbookValue;
     }
 
