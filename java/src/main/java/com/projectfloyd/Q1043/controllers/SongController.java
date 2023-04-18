@@ -96,6 +96,7 @@ public class SongController {
     @GetMapping(value = "/byRank/multiple", params = {"firstPage", "pageSize", "numberOfPages", "sort", "direction"})
     public ResponseEntity<List<Page<Song>>> getMultiplePaginatedSongsByRank(@RequestParam int firstPage, @RequestParam int pageSize, @RequestParam int numberOfPages, @RequestParam String sort, @RequestParam String direction) {
         //Same as the above function but lets as collect multiple pages at a time.
+        System.out.println("Attempting to get multiple songs by rank...");
         ArrayList<Page<Song>> pages = new ArrayList<>();
 
         for (int i = 0; i < numberOfPages; i++) {
