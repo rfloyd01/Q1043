@@ -166,7 +166,7 @@ export class SpotifyAPIComponent implements OnInit {
   }
 
   sleep(milliseconds:number) {
-    //a custom sleep function, we use this to wait inbetween Apotify API calls so that we don't overload
+    //a custom sleep function, we use this to wait inbetween Spotify API calls so that we don't overload
     //the server and get a 429 response. I don't currently know what the limit here is but I figure it's
     //better to be safe
     let start = new Date().getTime();
